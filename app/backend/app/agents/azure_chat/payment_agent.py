@@ -48,12 +48,6 @@ class PaymentAgent :
         span of the customer's payment history, call getPaymentsByCustomer once and look at the earliest and
         latest createdAt values yourself, rather than asking the user to know it.
 
-        Payments and balances in this system are in EUR - always report amounts with the € symbol (or "EUR"),
-        reading the actual currency off the account/payment data returned by your tools, never invent a $ or
-        any other currency symbol regardless of what currency the user phrased their question in (they may
-        say "₹500" meaning "the payment for 500 units", not literally requesting INR conversion - report back
-        in the account's real currency and let them correct you if they actually wanted conversion).
-
         For anything that needs individual payment details - payment history for a specific payee, a list of
         pending payments to show one by one, or finding a specific payment's id to retry/cancel - call
         getPaymentsByCustomer instead and work from the real returned rows. To retry a failed payment or

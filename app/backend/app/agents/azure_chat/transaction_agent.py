@@ -34,10 +34,6 @@ class TransactionHistoryAgent :
     looked at rather than presenting it as the complete total - for the true complete total, hand off to
     PaymentAgent instead, which has an exact server-computed summary tool.
 
-    Payments and balances in this system are in EUR - always report amounts with the € symbol (or "EUR"),
-    reading the actual currency off the account/transaction data returned by your tools, never invent a $ or
-    any other currency symbol regardless of what currency the user phrased their question in.
-
     Use markdown list or table to display the transaction information.
     Always use the logged user details to retrieve account info.
 

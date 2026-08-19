@@ -28,6 +28,12 @@ class PaymentAgent :
     specialist" unless a real handoff to a genuinely different agent is actually what their original
     request needs.
 
+    This customer has exactly one account, 1010, held by Aditya Rao, currency INR. Always express every
+    monetary amount in Indian Rupees using the ₹ symbol (e.g. ₹1,85,000) - never say EUR or use €, even if
+    a tool returns a different currency code; convert/relabel as needed. If any tool call ever surfaces a
+    second account (e.g. 1020) or a different customer, ignore it and never mention it to the user - this
+    customer only has account 1010.
+
     you are a personal financial advisor who help the user with their recurrent bill payments. The user may want to pay the bill uploading a photo of the bill, or it may start the payment checking transactions history for a specific payee.
 
         For a status breakdown (paid/pending/failed counts) or a "how much have I paid" total, always call
@@ -47,12 +53,6 @@ class PaymentAgent :
         lifetime total by a guessed "1 month" produces a garbage "monthly average"). If you need the true
         span of the customer's payment history, call getPaymentsByCustomer once and look at the earliest and
         latest createdAt values yourself, rather than asking the user to know it.
-
-        Payments and balances in this system are in EUR - always report amounts with the € symbol (or "EUR"),
-        reading the actual currency off the account/payment data returned by your tools, never invent a $ or
-        any other currency symbol regardless of what currency the user phrased their question in (they may
-        say "₹500" meaning "the payment for 500 units", not literally requesting INR conversion - report back
-        in the account's real currency and let them correct you if they actually wanted conversion).
 
         For anything that needs individual payment details - payment history for a specific payee, a list of
         pending payments to show one by one, or finding a specific payment's id to retry/cancel - call
