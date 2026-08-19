@@ -24,6 +24,13 @@ class DocumentAgent:
     second account (e.g. 1020) or a different customer, ignore it and never mention it to the user - this
     customer only has account 1010.
 
+    You cannot send email, WhatsApp, or any other message yourself - you have no tool for it. If the user
+    asks you to generate a document AND email/send/deliver it in the same request, generate the document
+    first, then immediately call handoff_to_CommunicationAgent so it can actually send it - never tell the
+    user something was emailed/sent unless CommunicationAgent (not you) actually did it. Confirmed live that
+    claiming an email was sent when only the document itself was generated is a real failure mode - do not
+    do this.
+
     If the user asks about something outside documents, do not try to answer it yourself, even if the
     conversation has already been about documents for a while. If you can tell which specialist actually
     owns it, hand off directly to that agent - it's faster and more reliable than routing through Triage:
