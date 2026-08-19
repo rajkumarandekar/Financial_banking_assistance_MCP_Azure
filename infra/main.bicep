@@ -99,6 +99,7 @@ param loanContainerAppName string = ''
 param creditContainerAppName string = ''
 param documentContainerAppName string = ''
 param communicationContainerAppName string = ''
+param investmentContainerAppName string = ''
 
 param agentsType string = 'foundry_v2' // options: azure_chat, foundry_v2
 param backendAppExists bool = false
@@ -111,6 +112,7 @@ param loanAppExists bool = false
 param creditAppExists bool = false
 param documentAppExists bool = false
 param communicationAppExists bool = false
+param investmentAppExists bool = false
 
 @description('Existing Postgres Flexible Server hostname (e.g. banking-assistant-pg.postgres.database.azure.com) - provisioned separately from this deployment, see infra/README-postgres.md')
 param postgresHost string
@@ -228,7 +230,7 @@ module backend 'app/backend.bicep' = {
       }
       {
         name: 'TRANSACTION_MCP_URL'
-        value: '${transaction.outputs.SERVICE_API_URI}/mcp'
+        value: transaction.outputs.SERVICE_API_URI
       }
       {
         name: 'PAYMENT_MCP_URL'
@@ -236,11 +238,11 @@ module backend 'app/backend.bicep' = {
       }
       {
         name: 'ACCOUNT_MCP_URL'
-        value: '${account.outputs.SERVICE_API_URI}/mcp'
+        value: account.outputs.SERVICE_API_URI
       }
       {
         name: 'CUSTOMER_MCP_URL'
-        value: '${customer.outputs.SERVICE_API_URI}/mcp'
+        value: customer.outputs.SERVICE_API_URI
       }
       {
         name: 'CUSTOMER_SERVICE_URL'
@@ -248,19 +250,23 @@ module backend 'app/backend.bicep' = {
       }
       {
         name: 'LOAN_MCP_URL'
-        value: '${loan.outputs.SERVICE_API_URI}/mcp'
+        value: loan.outputs.SERVICE_API_URI
       }
       {
         name: 'CREDIT_MCP_URL'
-        value: '${credit.outputs.SERVICE_API_URI}/mcp'
+        value: credit.outputs.SERVICE_API_URI
       }
       {
         name: 'DOCUMENT_MCP_URL'
-        value: '${document.outputs.SERVICE_API_URI}/mcp'
+        value: document.outputs.SERVICE_API_URI
       }
       {
         name: 'COMMUNICATION_MCP_URL'
-        value: '${communication.outputs.SERVICE_API_URI}/mcp'
+        value: communication.outputs.SERVICE_API_URI
+      }
+      {
+        name: 'INVESTMENT_MCP_URL'
+        value: investment.outputs.SERVICE_API_URI
       }
       {
         name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
@@ -475,24 +481,26 @@ module communication 'app/communication.bicep' = {
   }
 }
 
-module web 'app/web.bicep' = {
-  name: 'web'
+// The web frontend is hosted on Vercel (see app/frontend/banking-web/vercel.json)
+// instead of Azure Container Apps, so no `web` module is provisioned here.
+
+// Business Investment Api
+module investment 'app/investment.bicep' = {
+  name: 'investment'
   scope: resourceGroup
   params: {
-    name: !empty(webContainerAppName) ? webContainerAppName : '${abbrs.appContainerApps}web-${resourceToken}'
+    name: !empty(investmentContainerAppName) ? investmentContainerAppName : '${abbrs.appContainerApps}investment-${resourceToken}'
     location: location
     tags: tags
-    identityName: '${abbrs.managedIdentityUserAssignedIdentities}web-${resourceToken}'
-    apiBaseUrl:  backend.outputs.SERVICE_API_URI
-    transactionApiUrl: transaction.outputs.SERVICE_API_URI
-    accountApiUrl: account.outputs.SERVICE_API_URI
+    identityName: '${abbrs.managedIdentityUserAssignedIdentities}investment-${resourceToken}'
     applicationInsightsName: monitoring.outputs.applicationInsightsName
     containerAppsEnvironmentName: containerApps.outputs.environmentName
     containerRegistryName: containerApps.outputs.registryName
-    exists: webAppExists
+    corsAcaUrl: ''
+    exists: investmentAppExists
+    databaseUrl: postgresConnectionString
   }
 }
-
 
 // module openAi 'shared/ai/cognitiveservices.bicep' =  {
 //   name: 'openai'
@@ -693,6 +701,7 @@ output LOAN_SERVICE_URI string = loan.outputs.SERVICE_API_URI
 output CREDIT_SERVICE_URI string = credit.outputs.SERVICE_API_URI
 output DOCUMENT_SERVICE_URI string = document.outputs.SERVICE_API_URI
 output COMMUNICATION_SERVICE_URI string = communication.outputs.SERVICE_API_URI
+output INVESTMENT_SERVICE_URI string = investment.outputs.SERVICE_API_URI
 
 
 

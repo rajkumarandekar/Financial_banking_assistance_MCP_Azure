@@ -1,0 +1,57 @@
+name: Build and deploy all backend services to Azure Container Apps
+
+# Manual trigger only - this is not wired into the push-triggered app-ci.yaml
+# pipeline. Azure Container Registry Tasks (server-side remote build) is
+# blocked on Free Trial subscriptions, and local Docker wasn't available on
+# the dev machine, so GitHub-hosted runners (which have Docker preinstalled,
+# and are free/unlimited on public repos) build and push images instead.
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ACR_NAME: crc6bvzdtqfx6gm
+  RESOURCE_GROUP: rg-banking-assistant-dev
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - { name: backend, path: app/backend }
+          - { name: account, path: app/business-api/python/account }
+          - { name: payment, path: app/business-api/python/payment }
+          - { name: transaction, path: app/business-api/python/transaction }
+          - { name: customer, path: app/business-api/python/customer }
+          - { name: loan, path: app/business-api/python/loan }
+          - { name: credit, path: app/business-api/python/credit }
+          - { name: document, path: app/business-api/python/document }
+          - { name: communication, path: app/business-api/python/communication }
+          - { name: investment, path: app/business-api/python/investment }
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Log in to Azure Container Registry
+        run: az acr login --name ${{ env.ACR_NAME }}
+
+      - name: Build and push image
+        run: |
+          cd ${{ matrix.service.path }}
+          docker build . -t ${{ env.ACR_NAME }}.azurecr.io/${{ matrix.service.name }}:${{ github.sha }}
+          docker push ${{ env.ACR_NAME }}.azurecr.io/${{ matrix.service.name }}:${{ github.sha }}
+
+      - name: Deploy image to Container App
+        run: |
+          az containerapp update \
+            --name ca-${{ matrix.service.name }}-c6bvzdtqfx6gm \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --image ${{ env.ACR_NAME }}.azurecr.io/${{ matrix.service.name }}:${{ github.sha }}

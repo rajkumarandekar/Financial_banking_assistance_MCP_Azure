@@ -9,66 +9,67 @@ services:
     language: python
     host: containerapp
     docker:
-      remoteBuild: true
+      remoteBuild: false
   account:
     project: ./app/business-api/python/account
     language: python
     host: containerapp
     docker:
-      remoteBuild: true
+      remoteBuild: false
   payment:
     project: ./app/business-api/python/payment
     language: python
     host: containerapp
     docker:
-      remoteBuild: true
+      remoteBuild: false
   transaction:
     project: ./app/business-api/python/transaction
     language: python
     host: containerapp
     docker:
-      remoteBuild: true
+      remoteBuild: false
   customer:
     project: ./app/business-api/python/customer
     language: python
     host: containerapp
     docker:
-      remoteBuild: true
+      remoteBuild: false
   loan:
     project: ./app/business-api/python/loan
     language: python
     host: containerapp
     docker:
-      remoteBuild: true
+      remoteBuild: false
   credit:
     project: ./app/business-api/python/credit
     language: python
     host: containerapp
     docker:
-      remoteBuild: true
+      remoteBuild: false
   document:
     project: ./app/business-api/python/document
     language: python
     host: containerapp
     docker:
-      remoteBuild: true
+      remoteBuild: false
   communication:
     project: ./app/business-api/python/communication
     language: python
     host: containerapp
     docker:
-      remoteBuild: true
-# Uncomment/comment below lines to use the chatkit based frontend.Go to app/backend/Dockerfile and make sure to select the appropriate CMD line as well.
-  web:
-    project: app/frontend/banking-web
-    language: js
+      remoteBuild: false
+  investment:
+    project: ./app/business-api/python/investment
+    language: python
     host: containerapp
     docker:
-      remoteBuild: true
-# Uncomment/comment below lines to use the simple-chat frontend.Go to app/backend/Dockerfile and make sure to select the appropriate CMD line as well.
+      remoteBuild: false
+# web frontend is hosted on Vercel instead of Azure Container Apps - see
+# app/frontend/banking-web/vercel.json for the reverse-proxy config that
+# routes it to the backend services deployed below.
   # web:
-  #   project: app/frontend/simple-chat
+  #   project: app/frontend/banking-web
   #   language: js
   #   host: containerapp
   #   docker:
-  #     remoteBuild: true
+  #     remoteBuild: false
