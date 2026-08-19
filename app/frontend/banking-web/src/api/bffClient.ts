@@ -17,13 +17,13 @@ import {
 // come from customer-service, not a hardcoded mock, but the identity used
 // to look them up still needs a starting point in the absence of a real
 // session token.
-const SIGNED_IN_CUSTOMER_EMAIL = "bob.user@contoso.com";
+const SIGNED_IN_CUSTOMER_EMAIL = "rajkumarandekar1144@gmail.com";
 const SIGNED_IN_ACCOUNT_ID = "1010";
 
 // What the UI actually displays as the signed-in user's name/email (header,
 // avatar, dropdown) - independent of SIGNED_IN_CUSTOMER_EMAIL above, which
 // only exists to look up the real backing account's data.
-const DISPLAY_NAME = "Rajkumar";
+const DISPLAY_NAME = "Aditya Rao";
 const DISPLAY_EMAIL = "rajkumarandekar1144@gmail.com";
 
 const MOCK_SESSION_TOKEN = "mock-session-token-2025";
