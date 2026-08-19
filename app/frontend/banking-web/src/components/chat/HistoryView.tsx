@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { Clock, FolderPlus, NotebookText, Plus, Trash2 } from "lucide-react";
 
@@ -6,13 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { cn } from "@/common/utils";
 import { useChat } from "./ChatProvider";
-import type { Thread } from "./types";
 
 export function HistoryView() {
   const {
@@ -24,14 +18,6 @@ export function HistoryView() {
     starterPrompts,
     getThreadItems,
   } = useChat();
-  const [deleteTarget, setDeleteTarget] = useState<Thread | null>(null);
-
-  const confirmDelete = async () => {
-    if (!deleteTarget) return;
-    const target = deleteTarget;
-    setDeleteTarget(null);
-    await deleteThread(target.id);
-  };
 
   const renderThreads = () => (
     <ScrollArea className="flex-1">
@@ -72,9 +58,9 @@ export function HistoryView() {
                 aria-label="Delete conversation"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setDeleteTarget(thread);
+                  deleteThread(thread.id);
                 }}
-                className="absolute right-2 top-2 rounded-md p-1.5 text-muted-foreground opacity-0 transition hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+                className="absolute right-2 top-2 rounded-md p-1.5 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
@@ -152,23 +138,6 @@ export function HistoryView() {
       ) : (
         renderStarterPrompts()
       )}
-
-      <AlertDialog open={deleteTarget != null} onOpenChange={(o) => !o && setDeleteTarget(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete "{deleteTarget?.title || "Untitled thread"}"?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This permanently deletes the conversation and cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
