@@ -55,11 +55,11 @@ module app '../shared/host/container-app-upsert.bicep' = {
     containerMemory: '2.0Gi'
     targetPort: 8080
     external:false
-    secrets: {
-      'database-url': databaseUrl
-      'gmail-app-password': gmailAppPassword
-      'twilio-auth-token': twilioAuthToken
-    }
+    secrets: union(
+      { 'database-url': databaseUrl },
+      empty(gmailAppPassword) ? {} : { 'gmail-app-password': gmailAppPassword },
+      empty(twilioAuthToken) ? {} : { 'twilio-auth-token': twilioAuthToken }
+    )
     env: union(env, [
       {
         name: 'AZURE_CLIENT_ID'
@@ -82,20 +82,22 @@ module app '../shared/host/container-app-upsert.bicep' = {
         value: gmailAddress
       }
       {
-        name: 'GMAIL_APP_PASSWORD'
-        secretRef: 'gmail-app-password'
-      }
-      {
         name: 'TWILIO_ACCOUNT_SID'
         value: twilioAccountSid
       }
       {
-        name: 'TWILIO_AUTH_TOKEN'
-        secretRef: 'twilio-auth-token'
-      }
-      {
         name: 'TWILIO_WHATSAPP_FROM'
         value: twilioWhatsappFrom
+      }
+    ], empty(gmailAppPassword) ? [] : [
+      {
+        name: 'GMAIL_APP_PASSWORD'
+        secretRef: 'gmail-app-password'
+      }
+    ], empty(twilioAuthToken) ? [] : [
+      {
+        name: 'TWILIO_AUTH_TOKEN'
+        secretRef: 'twilio-auth-token'
       }
     ])
 
