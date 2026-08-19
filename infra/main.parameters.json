@@ -1,0 +1,120 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "value": "${AZURE_ENV_NAME}"
+    },
+    "resourceGroupName": {
+      "value": "${AZURE_RESOURCE_GROUP}"
+    },
+    "location": {
+      "value": "${AZURE_LOCATION}"
+    },
+    "openAiServiceName": {
+      "value": "${AZURE_OPENAI_SERVICE}"
+    },
+    "openAiResourceGroupName": {
+      "value": "${AZURE_OPENAI_RESOURCE_GROUP}"
+    },
+    "openAiResourceGroupLocation": {
+      "value": "${AZURE_OPENAI_SERVICE_LOCATION=eastus}"
+    },
+    "openAiSkuName": {
+      "value": "S0"
+    },
+    "documentIntelligenceServiceName": {
+      "value": "${AZURE_DOCUMENT_INTELLIGENCE_SERVICE}"
+    },
+    "documentIntelligenceResourceGroupName": {
+      "value": "${AZURE_DOCUMENT_INTELLIGENCE_RESOURCE_GROUP}"
+    },
+    "documentIntelligenceResourceGroupLocation": {
+      "value": "${AZURE_DOCUMENT_INTELLIGENCE_RESOURCE_GROUP_LOCATION=eastus}"
+    },
+    "documentIntelligenceSkuName": {
+      "value": "S0"
+    },
+    "storageAccountName": {
+      "value": "${AZURE_STORAGE_ACCOUNT}"
+    },
+    "storageResourceGroupName": {
+      "value": "${AZURE_STORAGE_RESOURCE_GROUP}"
+    },
+    "storageSkuName": {
+      "value": "${AZURE_STORAGE_SKU=Standard_LRS}"
+    },
+    "models": {
+      "value": [
+        {
+          "deploymentName": "gpt-4.1-mini",
+          "name": "gpt-4.1-mini",
+          "format": "OpenAI",
+          "version": "2025-04-14",
+          "skuName": "GlobalStandard",
+          "capacity": 50
+        }
+      ]
+    },
+    "foundryResourceGroupLocation": {
+      "value": "${AZURE_FOUNDRY_LOCATION=eastus2}"
+    }
+    ,
+    "agentsType": {
+      "value": "azure_chat"
+    }
+    ,
+    "backendAppExists": {
+      "value": false
+    },
+    "webAppExists": {
+      "value": false
+    },
+    "accountAppExists": {
+      "value": false
+    },
+    "paymentAppExists": {
+      "value": false
+    },
+    "transactionAppExists": {
+      "value": false
+    },
+    "customerAppExists": {
+      "value": false
+    },
+    "loanAppExists": {
+      "value": false
+    },
+    "creditAppExists": {
+      "value": false
+    },
+    "documentAppExists": {
+      "value": false
+    },
+    "communicationAppExists": {
+      "value": false
+    },
+    "postgresHost": {
+      "value": "${POSTGRES_HOST}"
+    },
+    "postgresAdminLogin": {
+      "value": "${POSTGRES_ADMIN_LOGIN=bankadmin}"
+    },
+    "postgresAdminPassword": {
+      "value": "${POSTGRES_ADMIN_PASSWORD}"
+    },
+    "postgresDatabase": {
+      "value": "${POSTGRES_DATABASE=bankingassistant}"
+    },
+    "authEnabled": {
+      "value": "${AUTH_ENABLED=false}"
+    },
+    "azureTenantId": {
+      "value": "${AZURE_AD_TENANT_ID}"
+    },
+    "azureAdBackendClientId": {
+      "value": "${AZURE_AD_BACKEND_CLIENT_ID}"
+    }
+  }
+
+}

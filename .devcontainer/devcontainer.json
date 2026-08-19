@@ -1,0 +1,32 @@
+{
+    "name": "Home Banking Assistant Python Dev Container",
+    "image": "mcr.microsoft.com/devcontainers/python:dev-3.12",
+    "features": {
+        "ghcr.io/devcontainers/features/azure-cli:1.2.9": {},
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "22"
+        },       
+        "ghcr.io/devcontainers/features/git:1": {
+            "version": "2.39.1"
+        },
+        "ghcr.io/devcontainers-extra/features/uv:1": {
+            "version": "latest"
+        },
+         "ghcr.io/azure/azure-dev/azd:latest": {}
+        
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "GitHub.vscode-github-actions",
+                "ms-azuretools.azure-dev",
+                "ms-azuretools.vscode-bicep",
+                "amodio.tsl-problem-matcher"
+            ]
+        }
+    },
+    "remoteUser": "vscode",
+    "hostRequirements": {
+        "memory": "8gb"
+    }
+}

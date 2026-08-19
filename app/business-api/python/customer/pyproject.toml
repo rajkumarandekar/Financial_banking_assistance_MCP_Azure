@@ -1,0 +1,17 @@
+[project]
+name = "banking-assistant-customer-mcp"
+version = "0.1.0"
+description = "Python MCP + GraphQL server for customer business-api"
+readme = "README.md"
+requires-python = ">=3.11"
+
+dependencies = [
+    "fastmcp==2.12.3",
+    "pydantic",
+    "fastapi[all]==0.116.1",
+    "uvicorn",
+    "sqlalchemy[asyncio]>=2.0.36",
+    "asyncpg>=0.30.0",
+    "alembic>=1.14.0",
+    "strawberry-graphql[fastapi]>=0.253.1",
+]

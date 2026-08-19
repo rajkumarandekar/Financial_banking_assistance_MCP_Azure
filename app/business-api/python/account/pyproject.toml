@@ -1,0 +1,19 @@
+[project]
+name = "banking-assistant-account-mcp"
+version = "0.1.0"
+description = "Python MCP server for account business-api using fastmcp"
+readme = "README.md"
+requires-python = ">=3.11"
+
+dependencies = [
+    "fastmcp",
+    "pydantic",
+    "fastapi[all]==0.116.1",
+    "uvicorn",
+    "sqlalchemy[asyncio]>=2.0.36",
+    "asyncpg>=0.30.0",
+    "alembic>=1.14.0",
+    "strawberry-graphql[fastapi]>=0.253.1",
+    "httpx>=0.28.1",
+]
+

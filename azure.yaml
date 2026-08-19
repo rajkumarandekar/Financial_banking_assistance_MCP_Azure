@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: home-banking-assistant-python
+metadata:
+  template: home-banking-assistant-python@1.0.0-alpha
+services:
+  backend:
+    project: ./app/backend
+    language: python
+    host: containerapp
+    docker:
+      remoteBuild: true
+  account:
+    project: ./app/business-api/python/account
+    language: python
+    host: containerapp
+    docker:
+      remoteBuild: true
+  payment:
+    project: ./app/business-api/python/payment
+    language: python
+    host: containerapp
+    docker:
+      remoteBuild: true
+  transaction:
+    project: ./app/business-api/python/transaction
+    language: python
+    host: containerapp
+    docker:
+      remoteBuild: true
+  customer:
+    project: ./app/business-api/python/customer
+    language: python
+    host: containerapp
+    docker:
+      remoteBuild: true
+  loan:
+    project: ./app/business-api/python/loan
+    language: python
+    host: containerapp
+    docker:
+      remoteBuild: true
+  credit:
+    project: ./app/business-api/python/credit
+    language: python
+    host: containerapp
+    docker:
+      remoteBuild: true
+  document:
+    project: ./app/business-api/python/document
+    language: python
+    host: containerapp
+    docker:
+      remoteBuild: true
+  communication:
+    project: ./app/business-api/python/communication
+    language: python
+    host: containerapp
+    docker:
+      remoteBuild: true
+# Uncomment/comment below lines to use the chatkit based frontend.Go to app/backend/Dockerfile and make sure to select the appropriate CMD line as well.
+  web:
+    project: app/frontend/banking-web
+    language: js
+    host: containerapp
+    docker:
+      remoteBuild: true
+# Uncomment/comment below lines to use the simple-chat frontend.Go to app/backend/Dockerfile and make sure to select the appropriate CMD line as well.
+  # web:
+  #   project: app/frontend/simple-chat
+  #   language: js
+  #   host: containerapp
+  #   docker:
+  #     remoteBuild: true
