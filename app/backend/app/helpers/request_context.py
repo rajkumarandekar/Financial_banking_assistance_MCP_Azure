@@ -20,8 +20,8 @@ class AuthenticatedUser:
 
 _MOCK_USER = AuthenticatedUser(
     user_id="bob-user-123",
-    email="bob.user@contoso.com",
-    name="Bob User",
+    email="rajkumarandekar1144@gmail.com",
+    name="Aditya Rao",
     customer_id="22222222-2222-2222-2222-222222222222",
     roles="customer",
 )
