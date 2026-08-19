@@ -362,10 +362,14 @@ function TaskItemRenderer({ item, isLastTask }: { item: TaskItem; isLastTask: bo
     <Card
       className={cn(
         "flex items-center gap-3 border-none px-4 py-1.5 text-sm shadow-none animate-in fade-in-0 slide-in-from-bottom-2 duration-300",
-        isComplete ? "bg-secondary/20 text-secondary-foreground" : "border-border/70 bg-background",
+        isComplete ? "bg-secondary/20 text-foreground" : "border-border/70 bg-background text-muted-foreground",
       )}
     >
-      {icon && <span aria-hidden>{icon}</span>}
+      {icon && (
+        <span aria-hidden className={isComplete ? "text-green-600" : "text-muted-foreground"}>
+          {icon}
+        </span>
+      )}
       <div className="flex-1">
         <p className={cn("font-medium leading-tight", shouldShimmer && "animate-shimmer")}>{task.title}</p>
         {task.type === "custom" && task.content && <p className="text-xs text-muted-foreground">{task.content}</p>}
