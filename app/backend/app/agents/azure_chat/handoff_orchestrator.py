@@ -167,11 +167,27 @@ class HandoffOrchestrator:
         checkpoint_storage = HandoffOrchestrator.thread_checkpoint_store.get(thread_id, None)
         if checkpoint_storage is not None:
             return checkpoint_storage
-        
+
         logger.info(f"Creating new checkpoint storage for thread_id: {thread_id}")
         checkpoint_storage = InMemoryCheckpointStorage()
         HandoffOrchestrator.thread_checkpoint_store[thread_id] = checkpoint_storage
         return checkpoint_storage
+
+    def reset_thread(self, thread_id: str) -> None:
+        """Drop this thread's cached checkpoint + workflow so the next message
+        starts a fresh conversation for it.
+
+        Mitigation for a framework-level gap (agent_framework_orchestrations'
+        HandoffAgentExecutor) where the tool_call/tool_result pairing recorded
+        across an approval-gated resume can go stale, causing every later
+        message in that thread to fail with an OpenAI 400 ("assistant message
+        with tool_calls must be followed by tool messages"). Not a real fix -
+        that lives in a vendored third-party package - but it turns a
+        permanently broken thread into a one-time loss of that thread's
+        context instead of a hard crash on every subsequent message.
+        """
+        HandoffOrchestrator.thread_checkpoint_store.pop(thread_id, None)
+        HandoffOrchestrator.thread_workflow_store.pop(thread_id, None)
 
     
     async def _resume_workflow_with_response(self, checkpoint_storage: CheckpointStorage, checkpoint_id: str, user_message: str) -> AsyncIterable[WorkflowEvent]:

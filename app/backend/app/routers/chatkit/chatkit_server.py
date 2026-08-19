@@ -162,6 +162,25 @@ class BankingAssistantChatKitServer(ChatKitClientWidgetMixin, ChatKitServer[dict
                     await self._update_thread_title(thread, input_user_message, context)
 
             except Exception as e:
+                error_str = str(e)
+                # Known framework-level gap: after an approval-gated tool call
+                # (e.g. a payment) completes, the checkpointed tool_call/tool_result
+                # pairing for this thread can go stale, permanently breaking every
+                # later message in it with this exact OpenAI 400. Reset just this
+                # thread's state and retry the current message once rather than
+                # showing the user a dead-end error.
+                if "must be followed by tool messages" in error_str and "tool_call_ids did not have response messages" in error_str:
+                    logger.warning(f"Thread {thread.id} hit the stale tool_call checkpoint issue; resetting thread state and retrying once")
+                    self.handoff_orchestrator.reset_thread(thread.id)
+                    try:
+                        af_events = self.handoff_orchestrator.processMessageStream(expanded_text_with_attachements, thread.id)
+                        chatkit_event_handler = ChatKitEventsHandler()
+                        async for event in chatkit_event_handler.handle_events(thread.id, af_events):
+                            yield event
+                        return
+                    except Exception as retry_e:
+                        logger.error(f"Retry after thread reset also failed for thread {thread.id}: {retry_e}", exc_info=True)
+
                 logger.error(f"Error processing message for thread {thread.id}: {e}", exc_info=True)
                 yield ErrorEvent(message = f"An error occurred while processing your message for thread {thread.id}")
 
