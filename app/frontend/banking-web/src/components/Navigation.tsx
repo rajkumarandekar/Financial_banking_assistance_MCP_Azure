@@ -65,15 +65,20 @@ export default function Navigation() {
   return (
     <nav className="flex h-16 shrink-0 items-center gap-2 border-b border-slate-200 bg-white px-4 shadow-sm sm:gap-4 sm:px-6">
       <MobileNav />
-      <div className="flex shrink-0 items-center space-x-3">
+      <button
+        type="button"
+        onClick={() => navigate("/")}
+        className="flex shrink-0 items-center space-x-3 rounded-lg transition hover:opacity-80"
+        aria-label="Go to dashboard"
+      >
         <div className="hidden h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-green-600 to-green-700 shadow-md sm:flex">
           <Landmark className="h-5 w-5 text-white" />
         </div>
-        <div className="hidden sm:block">
+        <div className="hidden sm:block text-left">
           <h2 className="text-lg font-bold leading-tight text-slate-900">SecureBank</h2>
           <p className="text-xs leading-none text-slate-500">Agentic Banking</p>
         </div>
-      </div>
+      </button>
 
       {/* Global search occupies the centre and shrinks before anything else */}
       <div className="flex min-w-0 flex-1 justify-center">

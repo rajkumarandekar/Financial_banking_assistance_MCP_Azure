@@ -5,6 +5,15 @@ server {
     root   /usr/share/nginx/html;
     index  index.html index.htm;
     try_files $uri $uri/ /index.html;
+    # index.html references content-hashed JS/CSS bundle filenames, so it
+    # must always be revalidated - otherwise browsers can keep serving a
+    # stale index.html (and therefore old bundles) across deployments.
+    add_header Cache-Control "no-cache";
+  }
+
+  location ~* \.(js|css|woff2?|png|jpg|jpeg|svg|ico)$ {
+    root   /usr/share/nginx/html;
+    add_header Cache-Control "public, max-age=31536000, immutable";
   }
 
   location /api/transactions/ {
