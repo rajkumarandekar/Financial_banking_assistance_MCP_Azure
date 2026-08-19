@@ -25,6 +25,7 @@ import CreditScore from "./pages/CreditScore";
 import Documents from "./pages/Documents";
 import Communications from "./pages/Communications";
 import AIAssistant from "./pages/AIAssistant";
+import ChatMetrics from "./pages/ChatMetrics";
 import Account from "./pages/Account";
 import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
@@ -105,6 +106,7 @@ const App = () => (
               <Route path="documents" element={<Documents />} />
               <Route path="communications" element={<Communications />} />
               <Route path="assistant" element={<AIAssistant />} />
+              <Route path="assistant/metrics/:threadId" element={<ChatMetrics />} />
               <Route path="account" element={<Account />} />
               <Route path="support" element={<Support />} />
               <Route path="*" element={<NotFound />} />

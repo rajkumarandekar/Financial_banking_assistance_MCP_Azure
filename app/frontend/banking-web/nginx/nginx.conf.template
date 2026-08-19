@@ -101,4 +101,10 @@ server {
     proxy_pass $CHATKIT_BASE_URL;
   }
 
+  location /threads {
+    proxy_ssl_server_name on;
+    proxy_http_version 1.1;
+    proxy_pass $CHATKIT_BASE_URL;
+  }
+
 }

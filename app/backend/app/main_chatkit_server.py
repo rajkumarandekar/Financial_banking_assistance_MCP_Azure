@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers.chatkit import attachment_routers
 from app.routers.chatkit import chat_routers
+from app.routers.chatkit import metrics_routers
 from app.config.settings import settings
 from app.middleware.auth_middleware import AuthMiddleware
 from app.config.logging import get_logger, setup_logging
@@ -55,7 +56,7 @@ def create_app() -> FastAPI:
     container = Container()
     
     # Wire dependencies to modules that need them
-    container.wire(modules=[chat_routers,attachment_routers])
+    container.wire(modules=[chat_routers,attachment_routers,metrics_routers])
     
     # Store container in app state for potential cleanup
     app.state.container = container
@@ -74,6 +75,7 @@ def create_app() -> FastAPI:
     # Include routers
     app.include_router(chat_routers.router, tags=["chat"])
     app.include_router(attachment_routers.router, tags=["attachments"])
+    app.include_router(metrics_routers.router, tags=["metrics"])
 
 
 

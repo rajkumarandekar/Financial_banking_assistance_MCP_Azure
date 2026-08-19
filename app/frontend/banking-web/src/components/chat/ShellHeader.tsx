@@ -1,5 +1,6 @@
-import { type LucideIcon, Sparkles, SquarePen, History } from "lucide-react";
+import { type LucideIcon, Sparkles, SquarePen, History, ChartColumn } from "lucide-react";
 import type { ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -25,6 +26,8 @@ export interface ShellHeaderConfig {
   showNewThreadButton?: boolean;
   /** Show/hide the history toggle button */
   showHistoryButton?: boolean;
+  /** Show/hide the per-chat metrics button (routes to /assistant/metrics/:threadId) */
+  showMetricsButton?: boolean;
   /** Custom header content (replaces entire header if provided) */
   customContent?: ReactNode;
 }
@@ -34,7 +37,8 @@ interface ShellHeaderProps {
 }
 
 export function ShellHeader({ config }: ShellHeaderProps) {
-  const { activeThread, createThread, historyOpen, toggleHistory } = useChat();
+  const { activeThread, activeThreadId, createThread, historyOpen, toggleHistory } = useChat();
+  const navigate = useNavigate();
 
   const {
     showHeader = true,
@@ -46,6 +50,7 @@ export function ShellHeader({ config }: ShellHeaderProps) {
     activeThreadFallback = "Untitled thread",
     showNewThreadButton = true,
     showHistoryButton = true,
+    showMetricsButton = true,
     customContent,
   } = config ?? {};
 
@@ -106,6 +111,23 @@ export function ShellHeader({ config }: ShellHeaderProps) {
                 </Button>
               </TooltipTrigger>
               <TooltipContent sideOffset={6}>{historyOpen ? "Close history" : "Show thread history"}</TooltipContent>
+            </Tooltip>
+          )}
+          {showMetricsButton && (
+            <Tooltip delayDuration={150}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  disabled={!activeThreadId}
+                  className="hover:bg-primary/10"
+                  onClick={() => activeThreadId && navigate(`/assistant/metrics/${activeThreadId}`)}
+                >
+                  <ChartColumn className="h-4 w-4" />
+                  <span className="sr-only">View chat metrics</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent sideOffset={6}>{activeThreadId ? "View metrics for this chat" : "Start a chat to see metrics"}</TooltipContent>
             </Tooltip>
           )}
         </div>
