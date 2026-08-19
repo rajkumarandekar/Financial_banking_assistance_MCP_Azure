@@ -23,7 +23,7 @@ const SIGNED_IN_ACCOUNT_ID = "1010";
 // What the UI actually displays as the signed-in user's name/email (header,
 // avatar, dropdown) - independent of SIGNED_IN_CUSTOMER_EMAIL above, which
 // only exists to look up the real backing account's data.
-const DISPLAY_NAME = "Aditya Rao";
+const DISPLAY_NAME = "Rajkumar";
 const DISPLAY_EMAIL = "rajkumarandekar1144@gmail.com";
 
 const MOCK_SESSION_TOKEN = "mock-session-token-2025";
