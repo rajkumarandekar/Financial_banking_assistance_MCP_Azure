@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Mail, MessageSquare, Bell } from "lucide-react";
 import { bffClient } from "@/api/bffClient";
 import { CommunicationEvent } from "@/models/Domain";
+import { markCommunicationsSeen } from "@/lib/communicationReadState";
 
 const channelIcon = (channel?: string | null) => {
   switch ((channel ?? "").toLowerCase()) {
@@ -33,10 +35,17 @@ const statusColor = (status?: string | null) => {
 
 export default function Communications() {
   const [events, setEvents] = useState<CommunicationEvent[]>([]);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     bffClient.getCommunicationHistory().then(setEvents);
   }, []);
+
+  useEffect(() => {
+    if (events.length > 0) {
+      markCommunicationsSeen(events.map((e) => e.id), queryClient);
+    }
+  }, [events, queryClient]);
 
   return (
     <div className="p-6 space-y-6 animate-fade-in">

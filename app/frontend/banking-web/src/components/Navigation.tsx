@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useAccountDetails, useCards, useLoans, useCreditScore, useCommunications } from "@/hooks/useBankingData";
 import { computeSmartAlerts, AlertSeverity } from "@/lib/alerts";
+import { useSeenCommunicationIds } from "@/lib/communicationReadState";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { MobileNav } from "@/components/MobileNav";
 
@@ -39,6 +40,8 @@ export default function Navigation() {
   const { data: loans } = useLoans();
   const { data: creditScore } = useCreditScore();
   const { data: communications = [] } = useCommunications();
+  const { data: seenCommunicationIds } = useSeenCommunicationIds();
+  const unreadCommunications = communications.filter((c) => !seenCommunicationIds?.has(c.id));
   const alerts = computeSmartAlerts({ account, cards, loans, creditScore });
 
   const initials = user?.name
@@ -91,13 +94,13 @@ export default function Navigation() {
           variant="ghost"
           size="icon"
           className="relative hover:bg-slate-50"
-          aria-label={`Messages${communications.length ? `, ${communications.length} in history` : ""}`}
+          aria-label={`Messages${unreadCommunications.length ? `, ${unreadCommunications.length} unread` : ""}`}
           onClick={() => navigate("/communications")}
         >
           <Mail className="h-5 w-5 text-slate-600" />
-          {communications.length > 0 && (
+          {unreadCommunications.length > 0 && (
             <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
-              {communications.length}
+              {unreadCommunications.length}
             </span>
           )}
         </Button>
