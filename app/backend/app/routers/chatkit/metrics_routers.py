@@ -13,6 +13,7 @@ else:
     raise ValueError(f"Unsupported AGENTS_TYPE: {settings.AGENTS_TYPE}")
 
 from app.helpers.user_profile_helper import UserProfileHelper
+from app.helpers.telemetry_metrics import get_thread_telemetry
 from .sqllite_store import SQLiteStore
 from .cosmosdb_store import CosmosDBStore
 
@@ -67,6 +68,8 @@ async def get_thread_metrics(
             break
         after = page.data[-1].id
 
+    telemetry = await get_thread_telemetry(thread_id)
+
     if not items:
         return JSONResponse(content={
             "thread_id": thread_id,
@@ -77,6 +80,7 @@ async def get_thread_metrics(
             "agent_path": [],
             "tool_calls": [],
             "timeline": [],
+            **telemetry,
         })
 
     timestamps = [item.created_at for item in items]
@@ -122,6 +126,18 @@ async def get_thread_metrics(
         elif item.type == "client_widget" and item.name == "tool_approval_request":
             timeline.append({"type": "approval_request", "tool_name": (item.args or {}).get("tool_name"), "at": item.created_at.isoformat(), "step_latency_ms": step_latency_ms})
 
+    # Server-side MCP tool calls never show up as ChatKit items (those only
+    # cover client-managed widgets/approvals) - the telemetry-derived
+    # executions are the only record of them, so fold them into the same
+    # timeline/tool_calls views the frontend already renders.
+    for call in telemetry["llm_calls"]:
+        timeline.append({"type": "llm_call", "model": call["model"], "at": call["at"], "step_latency_ms": call["duration_ms"]})
+    for exe in telemetry["tool_executions"]:
+        timeline.append({"type": "tool_execution", "name": exe["tool_name"], "service": exe["service"], "at": exe["at"], "step_latency_ms": exe["duration_ms"]})
+        tool_calls.append({"name": exe["tool_name"], "service": exe["service"], "status": "completed", "arguments": {}, "at": exe["at"], "step_latency_ms": exe["duration_ms"]})
+
+    timeline.sort(key=lambda e: e["at"])
+
     return JSONResponse(content={
         "thread_id": thread_id,
         "title": thread.title,
@@ -134,4 +150,5 @@ async def get_thread_metrics(
         "agent_path": agent_path,
         "tool_calls": tool_calls,
         "timeline": timeline,
+        **telemetry,
     })

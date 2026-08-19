@@ -53,6 +53,7 @@ class Settings(BaseSettings):
     #Logging and monitoring
     APPLICATIONINSIGHTS_CONNECTION_STRING: str | None = Field(default=None)
     ENABLE_OTEL : bool = Field(default=True)
+    LOG_ANALYTICS_WORKSPACE_ID: str | None = Field(default=None, description="Log Analytics workspace customerId (GUID) - used by the per-thread metrics endpoint to query gen_ai.* telemetry")
   
     
     # maps to environment variables described by the user

@@ -13,6 +13,7 @@ dependencies = [
     "azure-storage-blob==12.26.0",
     "azure-ai-documentintelligence==1.0.1",
     "azure-cosmos==4.15.0",
+    "azure-monitor-query==1.4.1",
     "dependency-injector==4.48.1",
     "agent-framework-core==1.0.0",
     "agent-framework-openai==1.0.0",

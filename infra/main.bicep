@@ -210,6 +210,10 @@ module backend 'app/backend.bicep' = {
     exists: backendAppExists
     env: [
       {
+        name: 'LOG_ANALYTICS_WORKSPACE_ID'
+        value: monitoring.outputs.logAnalyticsWorkspaceCustomerId
+      }
+      {
         name: 'AZURE_STORAGE_ACCOUNT'
         value: storage.outputs.name
       }
@@ -700,6 +704,19 @@ module cosmosDbRoleBackend 'shared/security/cosmosdb-role.bicep' = {
   params: {
     cosmosDbAccountName: cosmosDb.outputs.name
     principalId: backend.outputs.SERVICE_API_IDENTITY_PRINCIPAL_ID
+  }
+}
+
+// Log Analytics Reader - lets the backend query the gen_ai.* telemetry the
+// agent framework already emits (model, tokens, tool calls, latency) to
+// power the per-thread metrics page.
+module logAnalyticsReaderRoleBackend 'shared/security/role.bicep' = {
+  scope: resourceGroup
+  name: 'log-analytics-reader-role-backend'
+  params: {
+    principalId: backend.outputs.SERVICE_API_IDENTITY_PRINCIPAL_ID
+    roleDefinitionId: '73c42c96-874c-492b-b04d-ab87d138a8f2'
+    principalType: 'ServicePrincipal'
   }
 }
 
