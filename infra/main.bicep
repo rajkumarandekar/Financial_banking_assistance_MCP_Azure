@@ -126,6 +126,15 @@ param authEnabled bool = false
 param azureTenantId string = ''
 param azureAdBackendClientId string = ''
 
+@description('Real email/WhatsApp sending for the communication service. Leave any of these empty to keep that channel stubbed (logs only, no real send).')
+param gmailAddress string = ''
+@secure()
+param gmailAppPassword string = ''
+param twilioAccountSid string = ''
+@secure()
+param twilioAuthToken string = ''
+param twilioWhatsappFrom string = ''
+
 // Every service shares the same Postgres server/database - each owns a separate
 // schema internally (account_schema, loan_schema, ...), so the connection
 // string is identical across services, only the schema referenced by each
@@ -478,6 +487,11 @@ module communication 'app/communication.bicep' = {
     corsAcaUrl: ''
     exists: communicationAppExists
     databaseUrl: postgresConnectionString
+    gmailAddress: gmailAddress
+    gmailAppPassword: gmailAppPassword
+    twilioAccountSid: twilioAccountSid
+    twilioAuthToken: twilioAuthToken
+    twilioWhatsappFrom: twilioWhatsappFrom
   }
 }
 

@@ -17,6 +17,23 @@ param env array = []
 @secure()
 param databaseUrl string
 
+@description('Gmail address to send real emails from - leave empty to keep email sending stubbed')
+param gmailAddress string = ''
+
+@description('Gmail App Password (not the regular account password) - passed as a Container Apps secret')
+@secure()
+param gmailAppPassword string = ''
+
+@description('Twilio Account SID - leave empty to keep WhatsApp sending stubbed')
+param twilioAccountSid string = ''
+
+@description('Twilio Auth Token - passed as a Container Apps secret')
+@secure()
+param twilioAuthToken string = ''
+
+@description('Twilio WhatsApp sandbox sender, e.g. whatsapp:+14155238886')
+param twilioWhatsappFrom string = ''
+
 resource apiIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: identityName
   location: location
@@ -40,6 +57,8 @@ module app '../shared/host/container-app-upsert.bicep' = {
     external:false
     secrets: {
       'database-url': databaseUrl
+      'gmail-app-password': gmailAppPassword
+      'twilio-auth-token': twilioAuthToken
     }
     env: union(env, [
       {
@@ -57,6 +76,26 @@ module app '../shared/host/container-app-upsert.bicep' = {
       {
         name: 'DATABASE_URL'
         secretRef: 'database-url'
+      }
+      {
+        name: 'GMAIL_ADDRESS'
+        value: gmailAddress
+      }
+      {
+        name: 'GMAIL_APP_PASSWORD'
+        secretRef: 'gmail-app-password'
+      }
+      {
+        name: 'TWILIO_ACCOUNT_SID'
+        value: twilioAccountSid
+      }
+      {
+        name: 'TWILIO_AUTH_TOKEN'
+        secretRef: 'twilio-auth-token'
+      }
+      {
+        name: 'TWILIO_WHATSAPP_FROM'
+        value: twilioWhatsappFrom
       }
     ])
 

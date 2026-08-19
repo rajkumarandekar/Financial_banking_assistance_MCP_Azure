@@ -114,6 +114,21 @@
     },
     "azureAdBackendClientId": {
       "value": "${AZURE_AD_BACKEND_CLIENT_ID}"
+    },
+    "gmailAddress": {
+      "value": "${GMAIL_ADDRESS}"
+    },
+    "gmailAppPassword": {
+      "value": "${GMAIL_APP_PASSWORD}"
+    },
+    "twilioAccountSid": {
+      "value": "${TWILIO_ACCOUNT_SID}"
+    },
+    "twilioAuthToken": {
+      "value": "${TWILIO_AUTH_TOKEN}"
+    },
+    "twilioWhatsappFrom": {
+      "value": "${TWILIO_WHATSAPP_FROM}"
     }
   }
 
