@@ -91,7 +91,21 @@ export function ToolApprovalRequest({ args, itemId }: ClientWidgetProps) {
   const presentation = TOOL_PRESENTATION[tool_name] ?? DEFAULT_PRESENTATION;
   const Icon = presentation.icon;
 
-  const detailEntries = Object.entries(tool_args ?? {}).filter(([key]) => !HIDDEN_FIELDS.has(key));
+  // tool_args sometimes arrives as an already-parsed object and sometimes as
+  // a raw JSON string (framework-dependent) - normalize before iterating, or
+  // Object.entries on a string iterates its individual characters.
+  const parsedToolArgs: Record<string, unknown> =
+    typeof tool_args === "string"
+      ? (() => {
+          try {
+            return JSON.parse(tool_args);
+          } catch {
+            return {};
+          }
+        })()
+      : (tool_args ?? {});
+
+  const detailEntries = Object.entries(parsedToolArgs).filter(([key]) => !HIDDEN_FIELDS.has(key));
 
   const handleApprove = () => {
     setLoadingButton('approve');
