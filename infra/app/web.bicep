@@ -6,6 +6,13 @@ param identityName string
 param apiBaseUrl string
 param transactionApiUrl string
 param accountApiUrl string
+param paymentApiUrl string
+param customerApiUrl string
+param loanApiUrl string
+param creditApiUrl string
+param documentApiUrl string
+param communicationApiUrl string
+param investmentApiUrl string
 param applicationInsightsName string
 param containerAppsEnvironmentName string
 param containerRegistryName string
@@ -34,7 +41,7 @@ module app '../shared/host/container-app-upsert.bicep' = {
         value: applicationInsights.properties.ConnectionString
       }
       //used by simple-chat frontend
-      { 
+      {
         name: 'REACT_APP_API_BASE_URL'
         value: apiBaseUrl
       }
@@ -50,6 +57,34 @@ module app '../shared/host/container-app-upsert.bicep' = {
       {
         name: 'ACCOUNT_API_BASE_URL'
         value: accountApiUrl
+      }
+      {
+        name: 'PAYMENT_API_BASE_URL'
+        value: paymentApiUrl
+      }
+      {
+        name: 'CUSTOMER_API_BASE_URL'
+        value: customerApiUrl
+      }
+      {
+        name: 'LOAN_API_BASE_URL'
+        value: loanApiUrl
+      }
+      {
+        name: 'CREDIT_API_BASE_URL'
+        value: creditApiUrl
+      }
+      {
+        name: 'DOCUMENT_API_BASE_URL'
+        value: documentApiUrl
+      }
+      {
+        name: 'COMMUNICATION_API_BASE_URL'
+        value: communicationApiUrl
+      }
+      {
+        name: 'INVESTMENT_API_BASE_URL'
+        value: investmentApiUrl
       }
       {
         name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'

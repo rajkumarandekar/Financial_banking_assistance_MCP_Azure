@@ -481,8 +481,30 @@ module communication 'app/communication.bicep' = {
   }
 }
 
-// The web frontend is hosted on Vercel (see app/frontend/banking-web/vercel.json)
-// instead of Azure Container Apps, so no `web` module is provisioned here.
+module web 'app/web.bicep' = {
+  name: 'web'
+  scope: resourceGroup
+  params: {
+    name: !empty(webContainerAppName) ? webContainerAppName : '${abbrs.appContainerApps}web-${resourceToken}'
+    location: location
+    tags: tags
+    identityName: '${abbrs.managedIdentityUserAssignedIdentities}web-${resourceToken}'
+    apiBaseUrl: backend.outputs.SERVICE_API_URI
+    transactionApiUrl: transaction.outputs.SERVICE_API_URI
+    accountApiUrl: account.outputs.SERVICE_API_URI
+    paymentApiUrl: payment.outputs.SERVICE_API_URI
+    customerApiUrl: customer.outputs.SERVICE_API_URI
+    loanApiUrl: loan.outputs.SERVICE_API_URI
+    creditApiUrl: credit.outputs.SERVICE_API_URI
+    documentApiUrl: document.outputs.SERVICE_API_URI
+    communicationApiUrl: communication.outputs.SERVICE_API_URI
+    investmentApiUrl: investment.outputs.SERVICE_API_URI
+    applicationInsightsName: monitoring.outputs.applicationInsightsName
+    containerAppsEnvironmentName: containerApps.outputs.environmentName
+    containerRegistryName: containerApps.outputs.registryName
+    exists: webAppExists
+  }
+}
 
 // Business Investment Api
 module investment 'app/investment.bicep' = {

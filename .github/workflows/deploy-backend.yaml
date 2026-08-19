@@ -32,6 +32,7 @@ jobs:
           - { name: document, path: app/business-api/python/document }
           - { name: communication, path: app/business-api/python/communication }
           - { name: investment, path: app/business-api/python/investment }
+          - { name: web, path: app/frontend/banking-web }
     steps:
       - uses: actions/checkout@v4
 

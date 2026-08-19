@@ -1,21 +1,77 @@
 server {
   listen       80;
-    
+
   location / {
     root   /usr/share/nginx/html;
     index  index.html index.htm;
+    try_files $uri $uri/ /index.html;
   }
-  
-  location /api/transactions {
+
+  location /api/transactions/ {
     proxy_ssl_server_name on;
     proxy_http_version 1.1;
     proxy_pass $TRANSACTION_API_BASE_URL;
   }
-  
-  location /api/accounts {
+
+  location /api/accounts/ {
     proxy_ssl_server_name on;
     proxy_http_version 1.1;
     proxy_pass $ACCOUNT_API_BASE_URL;
+  }
+
+  location /api/cards/ {
+    proxy_ssl_server_name on;
+    proxy_http_version 1.1;
+    proxy_pass $ACCOUNT_API_BASE_URL;
+  }
+
+  location /api/graphql/payment {
+    proxy_ssl_server_name on;
+    proxy_http_version 1.1;
+    rewrite ^/api/graphql/payment(.*)$ /graphql$1 break;
+    proxy_pass $PAYMENT_API_BASE_URL;
+  }
+
+  location /api/graphql/investment {
+    proxy_ssl_server_name on;
+    proxy_http_version 1.1;
+    rewrite ^/api/graphql/investment(.*)$ /graphql$1 break;
+    proxy_pass $INVESTMENT_API_BASE_URL;
+  }
+
+  location /api/graphql/customer {
+    proxy_ssl_server_name on;
+    proxy_http_version 1.1;
+    rewrite ^/api/graphql/customer(.*)$ /graphql$1 break;
+    proxy_pass $CUSTOMER_API_BASE_URL;
+  }
+
+  location /api/graphql/loan {
+    proxy_ssl_server_name on;
+    proxy_http_version 1.1;
+    rewrite ^/api/graphql/loan(.*)$ /graphql$1 break;
+    proxy_pass $LOAN_API_BASE_URL;
+  }
+
+  location /api/graphql/credit {
+    proxy_ssl_server_name on;
+    proxy_http_version 1.1;
+    rewrite ^/api/graphql/credit(.*)$ /graphql$1 break;
+    proxy_pass $CREDIT_API_BASE_URL;
+  }
+
+  location /api/graphql/document {
+    proxy_ssl_server_name on;
+    proxy_http_version 1.1;
+    rewrite ^/api/graphql/document(.*)$ /graphql$1 break;
+    proxy_pass $DOCUMENT_API_BASE_URL;
+  }
+
+  location /api/graphql/communication {
+    proxy_ssl_server_name on;
+    proxy_http_version 1.1;
+    rewrite ^/api/graphql/communication(.*)$ /graphql$1 break;
+    proxy_pass $COMMUNICATION_API_BASE_URL;
   }
 
   location /chatkit {

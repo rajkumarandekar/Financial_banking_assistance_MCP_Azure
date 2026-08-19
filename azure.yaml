@@ -64,12 +64,9 @@ services:
     host: containerapp
     docker:
       remoteBuild: false
-# web frontend is hosted on Vercel instead of Azure Container Apps - see
-# app/frontend/banking-web/vercel.json for the reverse-proxy config that
-# routes it to the backend services deployed below.
-  # web:
-  #   project: app/frontend/banking-web
-  #   language: js
-  #   host: containerapp
-  #   docker:
-  #     remoteBuild: false
+  web:
+    project: app/frontend/banking-web
+    language: js
+    host: containerapp
+    docker:
+      remoteBuild: false
