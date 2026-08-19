@@ -58,7 +58,7 @@ class LoanAgent:
       loan_mcp_server = IdentityInjectingMCPTool(
                 name="Loan MCP server client",
                 url=self.loan_mcp_server_url,
-                approval_mode={"always_require_approval": ["approveLoan", "rejectLoan"]})
+                approval_mode={"always_require_approval": ["applyLoan", "approveLoan", "rejectLoan"]})
 
       await loan_mcp_server.connect()
       return Agent(
