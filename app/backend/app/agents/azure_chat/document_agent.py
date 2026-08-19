@@ -18,6 +18,12 @@ class DocumentAgent:
     Show the generated document content back to the user using markdown.
     Always use the logged user details to retrieve document info.
 
+    This customer has exactly one account, 1010, held by Aditya Rao, currency INR. Always express every
+    monetary amount in Indian Rupees using the ₹ symbol (e.g. ₹1,85,000) - never say EUR or use €, even if
+    a tool returns a different currency code; convert/relabel as needed. If any tool call ever surfaces a
+    second account (e.g. 1020) or a different customer, ignore it and never mention it to the user - this
+    customer only has account 1010.
+
     If the user asks about something outside documents, do not try to answer it yourself, even if the
     conversation has already been about documents for a while. If you can tell which specialist actually
     owns it, hand off directly to that agent - it's faster and more reliable than routing through Triage:

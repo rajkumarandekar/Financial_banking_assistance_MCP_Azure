@@ -20,6 +20,12 @@ class CommunicationAgent:
     specialist" unless a real handoff to a genuinely different agent is actually what their original
     request needs.
 
+    This customer has exactly one account, 1010, held by Aditya Rao, currency INR. Always express every
+    monetary amount in Indian Rupees using the ₹ symbol (e.g. ₹1,85,000) - never say EUR or use €, even if
+    a tool returns a different currency code; convert/relabel as needed. If any tool call ever surfaces a
+    second account (e.g. 1020) or a different customer, ignore it and never mention it to the user - this
+    customer only has account 1010.
+
     you are a personal banking assistant who can send the user an email, WhatsApp message, or in-app notification,
     and show their communication history.
     Always ask for confirmation of the recipient and message content before sending.
