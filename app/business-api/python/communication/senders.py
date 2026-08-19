@@ -21,12 +21,21 @@ import os
 import smtplib
 import urllib.parse
 import urllib.request
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
 
-def send_email_stub(to: str, subject: str, body: str) -> bool:
+def send_email_stub(
+    to: str,
+    subject: str,
+    body: str,
+    attachment_base64: Optional[str] = None,
+    attachment_filename: Optional[str] = None,
+) -> bool:
     gmail_address = os.environ.get("GMAIL_ADDRESS")
     gmail_app_password = os.environ.get("GMAIL_APP_PASSWORD")
 
@@ -35,7 +44,15 @@ def send_email_stub(to: str, subject: str, body: str) -> bool:
         return True
 
     try:
-        msg = MIMEText(body)
+        if attachment_base64 and attachment_filename:
+            msg = MIMEMultipart()
+            msg.attach(MIMEText(body))
+            attachment = MIMEApplication(base64.b64decode(attachment_base64), _subtype="pdf")
+            attachment.add_header("Content-Disposition", "attachment", filename=attachment_filename)
+            msg.attach(attachment)
+        else:
+            msg = MIMEText(body)
+
         msg["Subject"] = subject
         msg["From"] = gmail_address
         msg["To"] = to
@@ -45,7 +62,7 @@ def send_email_stub(to: str, subject: str, body: str) -> bool:
             server.login(gmail_address, gmail_app_password)
             server.sendmail(gmail_address, [to], msg.as_string())
 
-        logger.info("[EMAIL SENT via Gmail] to=%s subject=%s", to, subject)
+        logger.info("[EMAIL SENT via Gmail] to=%s subject=%s attachment=%s", to, subject, attachment_filename or "none")
         return True
     except Exception:
         logger.exception("Failed to send email via Gmail SMTP to=%s", to)

@@ -187,7 +187,8 @@ class Container(containers.DeclarativeContainer):
     communication_agent_chatkit = providers.Factory(
     CommunicationAgentChatKit,
     azure_chat_client=_azure_chat_client,
-    communication_mcp_server_url=f"{settings.COMMUNICATION_MCP_URL}/mcp"
+    communication_mcp_server_url=f"{settings.COMMUNICATION_MCP_URL}/mcp",
+    document_mcp_server_url=f"{settings.DOCUMENT_MCP_URL}/mcp"
     )
 
     investment_agent_chatkit = providers.Factory(

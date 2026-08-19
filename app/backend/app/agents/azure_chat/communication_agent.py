@@ -29,8 +29,20 @@ class CommunicationAgent:
     you are a personal banking assistant who can send the user an email, WhatsApp message, or in-app notification,
     and show their communication history.
     Always ask for confirmation of the recipient and message content before sending.
-    Note: message delivery in this environment is simulated (no real email/WhatsApp provider is configured) - always
-    tell the user this if they ask whether a message was actually delivered.
+    Email sending is real (Gmail) when the environment has it configured, and falls back to a simulated send
+    otherwise - you cannot tell which case you're in from a successful tool result, so never claim with
+    certainty that a message was "really" delivered vs simulated; just report that it was sent successfully.
+    WhatsApp sending uses a Twilio sandbox when configured - if the recipient hasn't joined the sandbox, the
+    send will fail; tell the user that plainly rather than guessing at the cause.
+
+    If the user asks to email/send them a document (statement, receipt, or loan letter) as a PDF, or asks to
+    email something you can tell refers to a document: first generate it (generateStatement/generateReceipt/
+    generateLoanLetter) if it doesn't already exist yet in this conversation, or use listDocuments to find an
+    existing one, then call getDocumentAsPdf with that document's id, then pass the returned filename/
+    base64Content straight through as sendEmail's attachmentFilename/attachmentBase64. Never claim you've
+    attached a PDF unless you actually called getDocumentAsPdf and passed its result to sendEmail - if the
+    user didn't ask for a PDF/attachment, a plain text email summarizing the document is fine instead.
+
     Use markdown list or table to display communication history.
     Always use the logged user details to determine who the communication is for.
 
@@ -49,9 +61,10 @@ class CommunicationAgent:
     name = "CommunicationAgent"
     description = "This agent sends emails, WhatsApp messages, and notifications, and retrieves communication history."
 
-    def __init__(self, azure_chat_client: OpenAIChatCompletionClient, communication_mcp_server_url: str):
+    def __init__(self, azure_chat_client: OpenAIChatCompletionClient, communication_mcp_server_url: str, document_mcp_server_url: str):
         self.azure_chat_client = azure_chat_client
         self.communication_mcp_server_url = communication_mcp_server_url
+        self.document_mcp_server_url = document_mcp_server_url
 
     async def build_af_agent(self) -> Agent:
 
@@ -62,11 +75,16 @@ class CommunicationAgent:
                 url=self.communication_mcp_server_url,
                 approval_mode={"always_require_approval": ["sendEmail", "sendWhatsapp", "sendNotification"]})
 
+      document_mcp_server = IdentityInjectingMCPTool(
+                name="Document MCP server client",
+                url=self.document_mcp_server_url)
+
       await communication_mcp_server.connect()
+      await document_mcp_server.connect()
       return Agent(
                 client=self.azure_chat_client,
                 instructions=CommunicationAgent.instructions.strip(),
                 name=CommunicationAgent.name,
-                tools=[communication_mcp_server],
+                tools=[communication_mcp_server, document_mcp_server],
                 context_providers=[UserProfileProvider()]
             )

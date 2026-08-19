@@ -15,4 +15,5 @@ dependencies = [
     "alembic>=1.14.0",
     "strawberry-graphql[fastapi]>=0.253.1",
     "httpx",
+    "fpdf2>=2.7.9",
 ]

@@ -8,6 +8,7 @@ import source_clients
 from db.base import get_session_context
 from gql import mappers
 from gql.repository import DocumentRepository
+from pdf_renderer import render_pdf_base64
 
 logger = logging.getLogger(__name__)
 mcp = FastMCP("Document MCP Server")
@@ -172,6 +173,31 @@ async def get_document(
             return None
         _check_self_or_admin(str(doc.customer_id), callerCustomerId, callerRole)
         return mappers.orm_to_document(doc)
+
+
+@mcp.tool(
+    name="getDocumentAsPdf",
+    description=(
+        "Render a previously generated document (statement, receipt, or loan letter) as a PDF. "
+        "Returns base64-encoded PDF bytes and a suggested filename - pass both straight through "
+        "to sendEmail's attachmentBase64/attachmentFilename to email the document as a real PDF."
+    ),
+)
+async def get_document_as_pdf(
+    documentId: Annotated[str, "Unique identifier for the document (from generateStatement/generateReceipt/generateLoanLetter/listDocuments)"],
+    callerCustomerId: Annotated[Optional[str], CALLER_ARGS_DOC] = None,
+    callerRole: Annotated[str, "role of the authenticated caller: admin|customer"] = "customer",
+):
+    async with get_session_context() as session:
+        repo = DocumentRepository(session)
+        doc = await repo.get_document(documentId)
+        if doc is None:
+            raise RuntimeError(f"Document {documentId} not found")
+        _check_self_or_admin(str(doc.customer_id), callerCustomerId, callerRole)
+
+        pdf_base64 = render_pdf_base64(doc.title, doc.content)
+        filename = f"{doc.document_type}-{documentId}.pdf"
+        return {"filename": filename, "base64Content": pdf_base64}
 
 
 @mcp.tool(name="listDocuments", description="List all documents generated for a customer (self, or any customer if admin)")

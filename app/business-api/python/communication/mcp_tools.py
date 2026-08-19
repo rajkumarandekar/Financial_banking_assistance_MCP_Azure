@@ -28,18 +28,20 @@ def _new_id() -> str:
     return "COM" + uuid.uuid4().hex[:14].upper()
 
 
-@mcp.tool(name="sendEmail", description="Send an email to a customer (self, or any customer if admin)")
+@mcp.tool(name="sendEmail", description="Send an email to a customer (self, or any customer if admin). Optionally attach a PDF by passing attachmentBase64/attachmentFilename from getDocumentAsPdf.")
 async def send_email(
     customerId: Annotated[str, "Customer id (UUID)"],
     recipientEmail: Annotated[str, "Recipient email address"],
     subject: Annotated[str, "Email subject"],
     body: Annotated[str, "Email body"],
+    attachmentBase64: Annotated[Optional[str], "Base64-encoded PDF bytes, e.g. from the document service's getDocumentAsPdf tool"] = None,
+    attachmentFilename: Annotated[Optional[str], "Filename for the attachment, e.g. from getDocumentAsPdf"] = None,
     callerCustomerId: Annotated[Optional[str], CALLER_ARGS_DOC] = None,
     callerRole: Annotated[str, "role of the authenticated caller: admin|customer"] = "customer",
 ):
-    logger.info("sendEmail customerId=%s subject=%s", customerId, subject)
+    logger.info("sendEmail customerId=%s subject=%s attachment=%s", customerId, subject, attachmentFilename or "none")
     _check_self_or_admin(customerId, callerCustomerId, callerRole)
-    success = senders.send_email_stub(recipientEmail, subject, body)
+    success = senders.send_email_stub(recipientEmail, subject, body, attachmentBase64, attachmentFilename)
     async with get_session_context() as session:
         repo = CommunicationRepository(session)
         comm = await repo.record_communication(
