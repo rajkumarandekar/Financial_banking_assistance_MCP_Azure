@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { ArrowLeft, Bot, Brain, CheckCircle2, Clock, Coins, MessageSquare, Server, Wrench } from "lucide-react";
+import { ArrowLeft, Bot, Brain, CheckCircle2, Clock, Coins, Loader2, MessageSquare, Server, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface LlmCallMetric {
   at: string;
@@ -115,14 +114,25 @@ export default function ChatMetrics() {
     if (!threadId) return;
     setLoading(true);
     setError(null);
-    fetch(`/threads/${threadId}/metrics`)
+    // The telemetry half of this query runs against Log Analytics, which can
+    // occasionally be slow - bound it so the loader can never spin forever.
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 45_000);
+    fetch(`/threads/${threadId}/metrics`, { signal: controller.signal })
       .then(async (res) => {
         if (!res.ok) throw new Error(`Server returned ${res.status}`);
         return res.json();
       })
       .then((data: ThreadMetrics) => setMetrics(data))
-      .catch((e) => setError(e.message || "Failed to load metrics"))
-      .finally(() => setLoading(false));
+      .catch((e) => setError(e.name === "AbortError" ? "Timed out - please try again" : (e.message || "Failed to load metrics")))
+      .finally(() => {
+        clearTimeout(timeout);
+        setLoading(false);
+      });
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
   }, [threadId]);
 
   const chartData = metrics?.llm_calls.map((call, i) => ({
@@ -145,10 +155,11 @@ export default function ChatMetrics() {
       </div>
 
       {loading && (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Skeleton key={i} className="h-24 rounded-xl" />
-          ))}
+        <div className="flex flex-col items-center justify-center gap-3 py-24 text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">
+            Crunching tokens, latency, and cost for this conversation...
+          </p>
         </div>
       )}
 
