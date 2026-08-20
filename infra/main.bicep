@@ -715,7 +715,7 @@ module logAnalyticsReaderRoleBackend 'shared/security/role.bicep' = {
   name: 'log-analytics-reader-role-backend'
   params: {
     principalId: backend.outputs.SERVICE_API_IDENTITY_PRINCIPAL_ID
-    roleDefinitionId: '73c42c96-874c-492b-b04d-ab87d138a8f2'
+    roleDefinitionId: '73c42c96-874c-492b-b04d-ab87d138a893'
     principalType: 'ServicePrincipal'
   }
 }
