@@ -32,8 +32,8 @@ class HandoffOrchestrator:
 
       # Triage rules
       - If the user request is related to bank account information like account balance, payment methods, cards and beneficiaries book you must call handoff_to_AccountAgent.
-      - If the user request is related to banking movements and payments history, you must call handoff_to_TransactionHistoryAgent.
-      - If the user request is related to initiate a payment request, upload a bill or invoice image for payment or manage an on-going payment process, you must call handoff_to_PaymentAgent.
+      - If the user request is related to card/account transaction history or banking movements in general (e.g. "show my last transactions", "when did I pay X"), you must call handoff_to_TransactionHistoryAgent.
+      - If the user request is about a specific payment's status, initiating a payment, uploading a bill or invoice image for payment, cancelling/retrying a payment, or a payment summary/history from the payment system itself (e.g. "what's the status of my last payment", "how many payments have I made"), you must call handoff_to_PaymentAgent - never TransactionHistoryAgent, since only PaymentAgent has the tools that carry payment status.
       - If the user request is related to their customer profile, contact details, or (for admins) searching for other customers, you must call handoff_to_CustomerAgent.
       - If the user request is related to loan applications, loan status, EMI schedules, or (for admins) approving/rejecting loans, you must call handoff_to_LoanAgent.
       - If the user request is related to credit score or credit history, you must call handoff_to_CreditAgent.
