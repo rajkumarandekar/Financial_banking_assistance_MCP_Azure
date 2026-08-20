@@ -232,6 +232,8 @@ export default function InvestmentPortfolio() {
             <TopLosersCard losers={losers} />
           </div>
 
+          <LiveMarketTicker trends={marketTrends} />
+
           <Card className="min-w-0 bg-card/50 backdrop-blur border-border/50">
             <CardHeader>
               <CardTitle className="text-foreground">Stock Holdings</CardTitle>
@@ -378,8 +380,6 @@ export default function InvestmentPortfolio() {
           </Card>
         </TabsContent>
       </Tabs>
-
-      <LiveMarketTicker trends={marketTrends} />
     </div>
   );
 }
