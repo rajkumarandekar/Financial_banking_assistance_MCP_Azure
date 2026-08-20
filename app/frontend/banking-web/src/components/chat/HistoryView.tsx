@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/common/utils";
+import { cn, parseServerDate } from "@/common/utils";
 import { useChat } from "./ChatProvider";
 
 export function HistoryView() {
@@ -65,7 +65,7 @@ export function HistoryView() {
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
               <div className="pr-6 text-xs text-muted-foreground">
-                {formatDistanceToNow(new Date(thread.created_at), { addSuffix: true })}
+                {formatDistanceToNow(parseServerDate(thread.created_at), { addSuffix: true })}
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground">{thread.title || "Untitled thread"}</p>

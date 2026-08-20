@@ -5,7 +5,7 @@ from typing import AsyncGenerator, AsyncIterable
 from app.common.chatkit.widgets import build_approval_request
 from app.common.chatkit.types import ClientWidgetItem, CustomThreadItemDoneEvent
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from agent_framework import Content,AgentResponseUpdate, WorkflowEvent
 from chatkit.types import (
@@ -87,7 +87,7 @@ class ChatKitEventsHandler:
                     thread_id=thread_id,
                     type="assistant_message",
                     content=[AssistantMessageContent(text= text)],
-                    created_at=datetime.now(),
+                    created_at=datetime.now(timezone.utc),
                 )
                 self.message_started = True
                 self.accumulated_text = text
@@ -128,7 +128,7 @@ class ChatKitEventsHandler:
             if event.type == "handoff_sent":  
                descriptive_title = f"Connected to {event.data.target} "
                handoff_result_task = CustomTask(title=descriptive_title, icon="check-circle-filled")
-               taskResultUpdate =  TaskItem(thread_id=thread_id,id=f"tsk_{uuid.uuid4().hex[:8]}", task=handoff_result_task, created_at=datetime.now())
+               taskResultUpdate =  TaskItem(thread_id=thread_id,id=f"tsk_{uuid.uuid4().hex[:8]}", task=handoff_result_task, created_at=datetime.now(timezone.utc))
                yield ThreadItemAddedEvent(item=taskResultUpdate)
                continue
 
@@ -159,7 +159,7 @@ class ChatKitEventsHandler:
                          self.tool_name_id_map[call_id] = function_call_content.name
                          descriptive_title = event_description_map[function_call_content.name]["start"] if function_call_content.name in event_description_map else function_call_content.name
                          function_call_task = CustomTask(title=descriptive_title, icon="search")
-                         taskUpdate =  TaskItem(thread_id=thread_id,id=call_id, task=function_call_task, created_at=datetime.now()) #type: ignore
+                         taskUpdate =  TaskItem(thread_id=thread_id,id=call_id, task=function_call_task, created_at=datetime.now(timezone.utc)) #type: ignore
                          yield ThreadItemAddedEvent(item=taskUpdate)
 
                 if isinstance(event.data, AgentResponseUpdate) \
@@ -178,7 +178,7 @@ class ChatKitEventsHandler:
                        tool_name = self.tool_name_id_map.get(function_result_content.call_id, function_result_content.name)
                        descriptive_title = event_description_map[tool_name]["end"] if tool_name in event_description_map else tool_name
                        function_result_task = CustomTask(title=descriptive_title, icon="check-circle-filled")
-                       taskResultUpdate =  TaskItem(thread_id=thread_id,id=function_result_content.call_id, task=function_result_task, created_at=datetime.now())
+                       taskResultUpdate =  TaskItem(thread_id=thread_id,id=function_result_content.call_id, task=function_result_task, created_at=datetime.now(timezone.utc))
                        yield ThreadItemAddedEvent(item=taskResultUpdate)
                 
                 if isinstance(event.data, AgentResponseUpdate) \
@@ -194,14 +194,14 @@ class ChatKitEventsHandler:
                     # widget_item = WidgetItem(
                     # id= f"wdg_{uuid.uuid4().hex[:8]}",
                     # thread_id=thread_id,
-                    # created_at=datetime.now(),
+                    # created_at=datetime.now(timezone.utc),
                     # widget=approval_request_widget)
                     # yield ThreadItemDoneEvent(type="thread.item.done", item=widget_item)
                     # Client Managed Widget Item
                     client_widget_item = ClientWidgetItem(
                         id= f"wdg_{uuid.uuid4().hex[:8]}",
                         thread_id=thread_id,
-                        created_at=datetime.now(),
+                        created_at=datetime.now(timezone.utc),
                         name="tool_approval_request",
                         args={
                             "tool_name": tool_name,
@@ -229,7 +229,7 @@ class ChatKitEventsHandler:
                 content=[AssistantMessageContent(text= self.accumulated_text)]
                 if self.accumulated_text
                 else [],
-                created_at=datetime.now(),
+                created_at=datetime.now(timezone.utc),
             )
 
             yield ThreadItemDoneEvent(type="thread.item.done", item=final_message)

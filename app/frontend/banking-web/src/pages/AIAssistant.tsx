@@ -9,7 +9,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { cn } from "@/common/utils";
+import { cn, parseServerDate } from "@/common/utils";
 import {
   ChatProvider,
   useChat,
@@ -162,7 +162,7 @@ function ThreadRail() {
                       <p className="text-xs text-muted-foreground truncate pr-6">{preview}</p>
                     )}
                     <p className="text-[11px] text-muted-foreground">
-                      {formatDistanceToNow(new Date(thread.created_at), { addSuffix: true })}
+                      {formatDistanceToNow(parseServerDate(thread.created_at), { addSuffix: true })}
                     </p>
                   </button>
                   <button

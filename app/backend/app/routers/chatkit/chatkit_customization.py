@@ -39,7 +39,7 @@ through the system correctly:
 
 import asyncio
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, AsyncGenerator, AsyncIterator, Callable
 
 from chatkit.errors import CustomStreamError, ErrorCode, StreamError
@@ -260,7 +260,7 @@ class ChatKitClientWidgetMixin:
             case ThreadsCreateReq():
                 thread = Thread(
                     id=self.store.generate_thread_id(context),  # type: ignore
-                    created_at=datetime.now(),
+                    created_at=datetime.now(timezone.utc),
                     items=Page(),  # type: ignore
                 )
                 await self.store.save_thread(

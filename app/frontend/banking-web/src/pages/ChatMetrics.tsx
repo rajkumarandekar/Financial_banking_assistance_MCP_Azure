@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { parseServerDate } from "@/common/utils";
 
 interface LlmCallMetric {
   at: string;
@@ -137,7 +138,7 @@ export default function ChatMetrics() {
 
   const chartData = metrics?.llm_calls.map((call, i) => ({
     label: `#${i + 1}`,
-    time: new Date(call.at).toLocaleTimeString(),
+    time: parseServerDate(call.at).toLocaleTimeString(),
     durationSec: Math.round((call.duration_ms / 1000) * 10) / 10,
     tokens: call.input_tokens + call.output_tokens,
   })) ?? [];
@@ -283,7 +284,7 @@ export default function ChatMetrics() {
                   <tbody>
                     {metrics.llm_calls.map((call, i) => (
                       <tr key={i} className="border-b border-border/40 last:border-0">
-                        <td className="py-2 pr-4 text-muted-foreground">{new Date(call.at).toLocaleTimeString()}</td>
+                        <td className="py-2 pr-4 text-muted-foreground">{parseServerDate(call.at).toLocaleTimeString()}</td>
                         <td className="py-2 pr-4 text-foreground">{call.model}</td>
                         <td className="py-2 pr-4 text-foreground">{call.input_tokens.toLocaleString("en-IN")}</td>
                         <td className="py-2 pr-4 text-foreground">{call.output_tokens.toLocaleString("en-IN")}</td>
@@ -340,7 +341,7 @@ export default function ChatMetrics() {
                           {entry.service ? ` (${entry.service})` : ""}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {new Date(entry.at).toLocaleTimeString()} · {formatDuration(entry.step_latency_ms)}
+                          {parseServerDate(entry.at).toLocaleTimeString()} · {formatDuration(entry.step_latency_ms)}
                         </p>
                       </div>
                     </div>
