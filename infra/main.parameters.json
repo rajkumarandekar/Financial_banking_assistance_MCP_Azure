@@ -129,6 +129,9 @@
     },
     "twilioWhatsappFrom": {
       "value": "${TWILIO_WHATSAPP_FROM}"
+    },
+    "alphaVantageApiKey": {
+      "value": "${ALPHA_VANTAGE_API_KEY}"
     }
   }
 

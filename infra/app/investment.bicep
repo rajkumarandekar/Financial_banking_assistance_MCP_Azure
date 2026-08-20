@@ -17,6 +17,10 @@ param env array = []
 @secure()
 param databaseUrl string
 
+@description('Alpha Vantage API key for live stock price refresh - optional, price refresh silently skips without it')
+@secure()
+param alphaVantageApiKey string = ''
+
 resource apiIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: identityName
   location: location
@@ -38,9 +42,10 @@ module app '../shared/host/container-app-upsert.bicep' = {
     containerMemory: '2.0Gi'
     targetPort: 8080
     external:false
-    secrets: {
-      'database-url': databaseUrl
-    }
+    secrets: union(
+      { 'database-url': databaseUrl },
+      empty(alphaVantageApiKey) ? {} : { 'alpha-vantage-api-key': alphaVantageApiKey }
+    )
     env: union(env, [
       {
         name: 'AZURE_CLIENT_ID'
@@ -57,6 +62,11 @@ module app '../shared/host/container-app-upsert.bicep' = {
       {
         name: 'DATABASE_URL'
         secretRef: 'database-url'
+      }
+    ], empty(alphaVantageApiKey) ? [] : [
+      {
+        name: 'ALPHA_VANTAGE_API_KEY'
+        secretRef: 'alpha-vantage-api-key'
       }
     ])
 

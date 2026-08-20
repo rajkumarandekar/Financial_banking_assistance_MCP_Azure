@@ -135,6 +135,10 @@ param twilioAccountSid string = ''
 param twilioAuthToken string = ''
 param twilioWhatsappFrom string = ''
 
+@description('Alpha Vantage API key for live stock price refresh (investment service) - leave empty to keep prices static/seeded')
+@secure()
+param alphaVantageApiKey string = ''
+
 // Every service shares the same Postgres server/database - each owns a separate
 // schema internally (account_schema, loan_schema, ...), so the connection
 // string is identical across services, only the schema referenced by each
@@ -539,6 +543,7 @@ module investment 'app/investment.bicep' = {
     corsAcaUrl: ''
     exists: investmentAppExists
     databaseUrl: postgresConnectionString
+    alphaVantageApiKey: alphaVantageApiKey
   }
 }
 
