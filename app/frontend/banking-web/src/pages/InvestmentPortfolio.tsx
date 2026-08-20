@@ -250,6 +250,7 @@ export default function InvestmentPortfolio() {
                       <TableHead>Company</TableHead>
                       <TableHead>Shares</TableHead>
                       <TableHead>Avg. Price</TableHead>
+                      <TableHead>Amount Invested</TableHead>
                       <TableHead>Purchased</TableHead>
                       <TableHead>Current Price</TableHead>
                       <TableHead>Market Value</TableHead>
@@ -270,6 +271,7 @@ export default function InvestmentPortfolio() {
                           <TableCell>{stock.name}</TableCell>
                           <TableCell>{stock.shares}</TableCell>
                           <TableCell>{formatINR(stock.purchasePrice)}</TableCell>
+                          <TableCell className="font-medium">{formatINR(stock.shares * stock.purchasePrice)}</TableCell>
                           <TableCell className="text-muted-foreground">
                             {stock.purchaseDate ? new Date(stock.purchaseDate).toLocaleDateString(undefined, { dateStyle: "medium" }) : "—"}
                           </TableCell>
