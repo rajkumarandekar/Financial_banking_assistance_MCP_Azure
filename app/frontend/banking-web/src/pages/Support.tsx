@@ -8,7 +8,7 @@ const BANKING_STARTER_PROMPTS: StarterPrompt[] = [
     title: "Pay a bill",
     description: "Upload an invoice or share the details",
     icon: "🧾",
-    content: "Pay my latest Alpine Utilities invoice for this month",
+    content: "Pay my latest City Water Board invoice for this month",
   },
   {
     id: "card-trend",
