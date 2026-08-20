@@ -43,7 +43,7 @@ export function ChatShell({ headerConfig }: ChatShellProps) {
                 maxVisibleAttachments={maxVisibleAttachments}
               />
             </div>
-            <div className="border-t border-border/70 bg-background/95">
+            <div className="sticky bottom-0 z-10 border-t border-border/70 bg-background/95">
               <Composer {...composerConfig} />
             </div>
           </div>

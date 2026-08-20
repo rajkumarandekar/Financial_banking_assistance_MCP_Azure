@@ -240,7 +240,7 @@ function AssistantWorkspace() {
               <div className="min-h-0 flex-1">
                 <StreamViewport attachmentImageSize="lg" maxVisibleAttachments={3} />
               </div>
-              <div className="border-t border-border/70 bg-background/95">
+              <div className="sticky bottom-0 z-10 border-t border-border/70 bg-background/95">
                 <Composer {...composerConfig} />
               </div>
             </div>
