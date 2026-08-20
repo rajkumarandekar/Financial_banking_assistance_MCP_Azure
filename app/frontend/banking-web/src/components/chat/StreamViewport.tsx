@@ -723,7 +723,7 @@ export function StreamViewport({
 
   return (
     <ScrollArea className="h-full w-full">
-      <div className="flex min-h-full flex-col gap-1 px-4 py-6 pb-24">
+      <div className={cn("flex min-h-full flex-col gap-1 px-4 py-6 pb-24", !showStarterPrompts && "justify-end")}>
         {showStarterPrompts ? (
           <StarterPrompts />
         ) : (
