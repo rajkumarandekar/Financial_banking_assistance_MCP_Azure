@@ -29,6 +29,7 @@ def orm_to_holding(row: HoldingORM, prices: Optional[Dict[str, StockPriceORM]] =
         shares=float(row.shares),
         avgPurchasePrice=float(row.avg_purchase_price),
         currentPrice=float(price_row.price) if price_row and price_row.price is not None else None,
+        purchasedAt=row.created_at.isoformat() if row.created_at else None,
     )
 
 

@@ -28,6 +28,7 @@ export function useHoldings(): Stock[] {
       shares: h.shares,
       currentPrice: h.currentPrice ?? 0,
       purchasePrice: h.avgPurchasePrice,
+      purchaseDate: h.purchasedAt ?? undefined,
       sector: h.sector ?? "Other",
     })),
     [data]

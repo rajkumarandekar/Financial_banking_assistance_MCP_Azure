@@ -5,8 +5,9 @@ export interface Stock {
   shares: number;
   currentPrice: number;
   purchasePrice: number;
-  // A holding's average cost can span several buys over time now that
-  // trades are real - there's no single "purchase date" to show anymore.
+  // Date of the *first* buy that created this holding. If more shares were
+  // bought later, avgPurchasePrice blends across all of them, but this date
+  // doesn't move - it's "when I started this position", not "every buy".
   purchaseDate?: string;
   sector: string;
 }

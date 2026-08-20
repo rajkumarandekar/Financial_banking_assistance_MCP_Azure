@@ -250,6 +250,7 @@ export default function InvestmentPortfolio() {
                       <TableHead>Company</TableHead>
                       <TableHead>Shares</TableHead>
                       <TableHead>Avg. Price</TableHead>
+                      <TableHead>Purchased</TableHead>
                       <TableHead>Current Price</TableHead>
                       <TableHead>Market Value</TableHead>
                       <TableHead>Gain/Loss</TableHead>
@@ -269,6 +270,9 @@ export default function InvestmentPortfolio() {
                           <TableCell>{stock.name}</TableCell>
                           <TableCell>{stock.shares}</TableCell>
                           <TableCell>{formatINR(stock.purchasePrice)}</TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {stock.purchaseDate ? new Date(stock.purchaseDate).toLocaleDateString(undefined, { dateStyle: "medium" }) : "—"}
+                          </TableCell>
                           <TableCell>{hasPrice ? formatINR(stock.currentPrice) : <span className="text-xs text-muted-foreground">Pending refresh</span>}</TableCell>
                           <TableCell>{hasPrice ? formatINR(marketValue) : "—"}</TableCell>
                           <TableCell className={!hasPrice ? "text-muted-foreground" : gainLoss >= 0 ? "text-green-600" : "text-rose-600"}>

@@ -26,6 +26,7 @@ class HoldingType:
     shares: float
     avgPurchasePrice: float
     currentPrice: Optional[float] = None
+    purchasedAt: Optional[str] = None
 
 
 @strawberry.type
