@@ -29,10 +29,11 @@ def orm_to_holding(row: HoldingORM, prices: Optional[Dict[str, StockPriceORM]] =
         shares=float(row.shares),
         avgPurchasePrice=float(row.avg_purchase_price),
         currentPrice=float(price_row.price) if price_row and price_row.price is not None else None,
-        # updated_at, not created_at: it advances on every additional buy
-        # (SQLAlchemy's onupdate fires whenever shares/avg_purchase_price
-        # change), so "Purchased" reflects the most recent purchase rather
-        # than freezing at whichever day the position was first opened.
+        # created_at never changes after the position is first opened - the
+        # original purchase date. updated_at advances on every additional
+        # buy (SQLAlchemy's onupdate fires whenever shares/avg_purchase_price
+        # change), so it tracks the most recent purchase instead.
+        firstPurchasedAt=row.created_at.isoformat() if row.created_at else None,
         purchasedAt=row.updated_at.isoformat() if row.updated_at else None,
     )
 

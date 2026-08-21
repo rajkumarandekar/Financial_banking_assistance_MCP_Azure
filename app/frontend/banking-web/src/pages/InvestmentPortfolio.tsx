@@ -8,6 +8,7 @@
 // this system has no real data source for (market indices, market-cap tier,
 // historical performance chart) are simply left out rather than faked.
 import { useMemo, useState } from "react";
+import { parseServerDate } from "@/common/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -249,9 +250,9 @@ export default function InvestmentPortfolio() {
                       <TableHead>Symbol</TableHead>
                       <TableHead>Company</TableHead>
                       <TableHead>Shares</TableHead>
-                      <TableHead>Avg. Price</TableHead>
                       <TableHead>Amount Invested</TableHead>
-                      <TableHead>Purchased</TableHead>
+                      <TableHead>First Purchased</TableHead>
+                      <TableHead>Latest Purchase</TableHead>
                       <TableHead>Current Price</TableHead>
                       <TableHead>Market Value</TableHead>
                       <TableHead>Gain/Loss</TableHead>
@@ -270,10 +271,12 @@ export default function InvestmentPortfolio() {
                           <TableCell className="font-medium">{stock.symbol}</TableCell>
                           <TableCell>{stock.name}</TableCell>
                           <TableCell>{stock.shares}</TableCell>
-                          <TableCell>{formatINR(stock.purchasePrice)}</TableCell>
                           <TableCell className="font-medium">{formatINR(stock.shares * stock.purchasePrice)}</TableCell>
                           <TableCell className="text-muted-foreground">
-                            {stock.purchaseDate ? new Date(stock.purchaseDate).toLocaleDateString(undefined, { dateStyle: "medium" }) : "—"}
+                            {stock.firstPurchaseDate ? parseServerDate(stock.firstPurchaseDate).toLocaleDateString(undefined, { dateStyle: "medium" }) : "—"}
+                          </TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {stock.latestPurchaseDate ? parseServerDate(stock.latestPurchaseDate).toLocaleDateString(undefined, { dateStyle: "medium" }) : "—"}
                           </TableCell>
                           <TableCell>{hasPrice ? formatINR(stock.currentPrice) : <span className="text-xs text-muted-foreground">Pending refresh</span>}</TableCell>
                           <TableCell>{hasPrice ? formatINR(marketValue) : "—"}</TableCell>

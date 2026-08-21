@@ -88,6 +88,7 @@ export interface HoldingRecord {
   shares: number;
   avgPurchasePrice: number;
   currentPrice?: number | null;
+  firstPurchasedAt?: string | null;
   purchasedAt?: string | null;
 }
 

@@ -5,9 +5,11 @@ export interface Stock {
   shares: number;
   currentPrice: number;
   purchasePrice: number;
-  // Date of the *first* buy that created this holding. If more shares were
-  // bought later, avgPurchasePrice blends across all of them, but this date
-  // doesn't move - it's "when I started this position", not "every buy".
-  purchaseDate?: string;
+  // Date this position was first opened - never moves on later buys.
+  firstPurchaseDate?: string;
+  // Date of the most recent buy into this symbol - advances every time more
+  // shares are bought (avgPurchasePrice blends across all buys, this date
+  // tracks only the latest one).
+  latestPurchaseDate?: string;
   sector: string;
 }

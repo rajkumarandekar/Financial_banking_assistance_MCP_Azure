@@ -361,7 +361,7 @@ export class BFFClient {
       "investment",
       `query($customerId: String!) {
         holdingsByCustomer(customerId: $customerId) {
-          id customerId accountId symbol companyName sector shares avgPurchasePrice currentPrice purchasedAt
+          id customerId accountId symbol companyName sector shares avgPurchasePrice currentPrice firstPurchasedAt purchasedAt
         }
       }`,
       { customerId }

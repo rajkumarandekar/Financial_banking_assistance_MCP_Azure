@@ -26,6 +26,7 @@ class HoldingType:
     shares: float
     avgPurchasePrice: float
     currentPrice: Optional[float] = None
+    firstPurchasedAt: Optional[str] = None
     purchasedAt: Optional[str] = None
 
 
