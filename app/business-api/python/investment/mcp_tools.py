@@ -91,6 +91,20 @@ async def sell_stock(
         return mappers.orm_to_transaction(row)
 
 
+@mcp.tool(name="getStockTransactions", description="Get a customer's stock buy/sell trade history (self, or any customer if admin) - not banking transactions, this is trade history only")
+async def get_stock_transactions(
+    customerId: Annotated[str, "Customer id (UUID)"],
+    callerCustomerId: Annotated[Optional[str], CALLER_ARGS_DOC] = None,
+    callerRole: Annotated[str, "role of the authenticated caller: admin|customer"] = "customer",
+):
+    logger.info("getStockTransactions customerId=%s", customerId)
+    _check_self_or_admin(customerId, callerCustomerId, callerRole)
+    async with get_session_context() as session:
+        repo = InvestmentRepository(session)
+        rows = await repo.get_transactions_by_customer(customerId)
+        return [mappers.orm_to_transaction(r) for r in rows]
+
+
 @mcp.tool(name="refreshStockPrices", description="Force an on-demand refresh of all tracked stock prices from Alpha Vantage")
 async def refresh_stock_prices(
     callerCustomerId: Annotated[Optional[str], CALLER_ARGS_DOC] = None,

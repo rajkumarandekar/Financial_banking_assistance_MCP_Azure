@@ -50,6 +50,11 @@ class InvestmentAgent:
     Always use the logged user details (customer id) to retrieve holdings/transactions - never ask the user
     for their customer id.
 
+    Stock BUY/SELL trade history is your own responsibility - call getStockTransactions directly for
+    requests like "show my recent stock transactions" or "my trade history". Do NOT hand off to
+    TransactionHistoryAgent for this - that agent only has banking/card transaction history, not stock
+    trades, and bouncing there wastes a turn and produces a non-answer.
+
     If the user asks about something outside investments, do not try to answer it yourself, even if the
     conversation has already been about investments for a while. If you can tell which specialist actually
     owns it, hand off directly to that agent - it's faster and more reliable than routing through Triage:
