@@ -1,4 +1,5 @@
 import logging
+from datetime import timezone
 from fastapi import APIRouter, Depends
 from starlette.responses import JSONResponse
 from dependency_injector.wiring import Provide, inject
@@ -38,6 +39,15 @@ def _redact_args(arguments: dict) -> dict:
     return {k: v for k, v in (arguments or {}).items() if k not in _HIDDEN_ARG_FIELDS}
 
 
+def _as_utc(dt):
+    """Older thread items were stamped with a naive datetime.now() (a bug,
+    since fixed at the source) - comparing/subtracting those against newer
+    timezone-aware timestamps raises TypeError. Every naive value here is
+    already UTC wall-clock time (the container's own clock), just missing
+    the marker, so attaching UTC is correct, not a guess."""
+    return dt if dt.tzinfo is not None else dt.replace(tzinfo=timezone.utc)
+
+
 @router.get("/threads/{thread_id}/metrics")
 @inject
 async def get_thread_metrics(
@@ -74,7 +84,7 @@ async def get_thread_metrics(
         return JSONResponse(content={
             "thread_id": thread_id,
             "title": thread.title,
-            "created_at": thread.created_at.isoformat(),
+            "created_at": _as_utc(thread.created_at).isoformat(),
             "turn_count": 0,
             "total_duration_ms": 0,
             "agent_path": [],
@@ -83,7 +93,7 @@ async def get_thread_metrics(
             **telemetry,
         })
 
-    timestamps = [item.created_at for item in items]
+    timestamps = [_as_utc(item.created_at) for item in items]
     total_duration_ms = int((max(timestamps) - min(timestamps)).total_seconds() * 1000)
 
     agent_path: list[str] = []
@@ -95,36 +105,37 @@ async def get_thread_metrics(
 
     prev_ts = None
     for item in items:
-        step_latency_ms = int((item.created_at - prev_ts).total_seconds() * 1000) if prev_ts else 0
-        prev_ts = item.created_at
+        created_at = _as_utc(item.created_at)
+        step_latency_ms = int((created_at - prev_ts).total_seconds() * 1000) if prev_ts else 0
+        prev_ts = created_at
 
         if item.type == "user_message":
             user_turns += 1
-            timeline.append({"type": "user_message", "at": item.created_at.isoformat(), "step_latency_ms": step_latency_ms})
+            timeline.append({"type": "user_message", "at": created_at.isoformat(), "step_latency_ms": step_latency_ms})
 
         elif item.type == "assistant_message":
             assistant_turns += 1
-            timeline.append({"type": "assistant_message", "at": item.created_at.isoformat(), "step_latency_ms": step_latency_ms})
+            timeline.append({"type": "assistant_message", "at": created_at.isoformat(), "step_latency_ms": step_latency_ms})
 
         elif item.type == "task":
             task = item.task
             title = getattr(task, "title", None) or getattr(task, "content", None) or "Task"
             if not agent_path or agent_path[-1] != title:
                 agent_path.append(title)
-            timeline.append({"type": "task", "title": title, "at": item.created_at.isoformat(), "step_latency_ms": step_latency_ms})
+            timeline.append({"type": "task", "title": title, "at": created_at.isoformat(), "step_latency_ms": step_latency_ms})
 
         elif item.type == "client_tool_call":
             tool_calls.append({
                 "name": item.name,
                 "status": item.status,
                 "arguments": _redact_args(item.arguments),
-                "at": item.created_at.isoformat(),
+                "at": created_at.isoformat(),
                 "step_latency_ms": step_latency_ms,
             })
-            timeline.append({"type": "tool_call", "name": item.name, "status": item.status, "at": item.created_at.isoformat(), "step_latency_ms": step_latency_ms})
+            timeline.append({"type": "tool_call", "name": item.name, "status": item.status, "at": created_at.isoformat(), "step_latency_ms": step_latency_ms})
 
         elif item.type == "client_widget" and item.name == "tool_approval_request":
-            timeline.append({"type": "approval_request", "tool_name": (item.args or {}).get("tool_name"), "at": item.created_at.isoformat(), "step_latency_ms": step_latency_ms})
+            timeline.append({"type": "approval_request", "tool_name": (item.args or {}).get("tool_name"), "at": created_at.isoformat(), "step_latency_ms": step_latency_ms})
 
     # Server-side MCP tool calls never show up as ChatKit items (those only
     # cover client-managed widgets/approvals) - the telemetry-derived
@@ -141,7 +152,7 @@ async def get_thread_metrics(
     return JSONResponse(content={
         "thread_id": thread_id,
         "title": thread.title,
-        "created_at": thread.created_at.isoformat(),
+        "created_at": _as_utc(thread.created_at).isoformat(),
         "turn_count": user_turns,
         "assistant_turn_count": assistant_turns,
         "total_duration_ms": total_duration_ms,
