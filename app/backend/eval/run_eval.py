@@ -170,9 +170,11 @@ Return ONLY compact JSON with this exact shape, no markdown, no explanation outs
         return {"error": str(e)}
 
 
-def run(label: str) -> dict:
+def run(label: str, services: list[str] | None = None) -> dict:
     import subprocess
     from openai import AzureOpenAI
+
+    cases = [c for c in CASES if not services or c["service"] in services] if services else CASES
 
     # azure.identity's AzureCliCredential fails to invoke `az` as a subprocess
     # in this shell (Windows Git Bash PATH resolution) - shell out directly instead.
@@ -189,9 +191,9 @@ def run(label: str) -> dict:
     results = []
     os.makedirs(RESULTS_DIR, exist_ok=True)
     out_path = os.path.join(RESULTS_DIR, f"{label}.json")
-    print(f"\n=== Running eval [{label}] - {len(CASES)} cases against live app ===\n")
+    print(f"\n=== Running eval [{label}] - {len(cases)} cases against live app ===\n")
 
-    for case in CASES:
+    for case in cases:
         print(f"-> {case['id']}: {case['prompt'][:60]}...")
         try:
             thread_id, response_text, wall_seconds = _send_message(case["prompt"])
@@ -282,5 +284,7 @@ def run(label: str) -> dict:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--label", required=True, help="e.g. baseline or after-fixes")
+    parser.add_argument("--services", default=None, help="comma-separated service filter, e.g. payment,loan")
     args = parser.parse_args()
-    run(args.label)
+    services = [s.strip() for s in args.services.split(",")] if args.services else None
+    run(args.label, services=services)
