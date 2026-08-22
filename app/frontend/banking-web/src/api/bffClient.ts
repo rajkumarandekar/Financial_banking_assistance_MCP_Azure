@@ -75,6 +75,18 @@ export class BFFClient {
     };
   }
 
+  // Fire-and-forget: a failed login-alert email should never block sign-in
+  // itself, so callers don't need to (and shouldn't) await this seriously.
+  async sendLoginAlertEmail(customerId: string, recipientEmail: string, deviceInfo: string): Promise<void> {
+    await this.graphql<{ sendLoginAlertEmail: unknown }>(
+      "communication",
+      `mutation($customerId: String!, $recipientEmail: String!, $deviceInfo: String!) {
+        sendLoginAlertEmail(customerId: $customerId, recipientEmail: $recipientEmail, deviceInfo: $deviceInfo) { id status }
+      }`,
+      { customerId, recipientEmail, deviceInfo }
+    );
+  }
+
   async getUserProfile(): Promise<UserProfile> {
     if (!this.profileCache) {
       this.profileCache = this.graphql<{ customerByEmail: { id: string; email: string; fullName: string; role: string } | null }>(

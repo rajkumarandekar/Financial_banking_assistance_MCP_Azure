@@ -44,6 +44,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(AUTH_TOKEN_KEY, response.token);
     const profile = await bffClient.getUserProfile();
     setUser(profile);
+
+    // Best-effort security notification - never block sign-in on this.
+    bffClient
+      .sendLoginAlertEmail(profile.id, profile.email, navigator.userAgent)
+      .catch((err) => console.error("Failed to send login alert email:", err));
   }, []);
 
   const logout = useCallback(() => {
