@@ -5,6 +5,7 @@ import { UserProfile } from "@/models/UserProfile";
 interface LoginCredentials {
   email: string;
   password: string;
+  name: string;
 }
 
 interface AuthContextValue {
@@ -47,7 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // Best-effort security notification - never block sign-in on this.
     bffClient
-      .sendLoginAlertEmail(profile.id, profile.email, navigator.userAgent)
+      .sendLoginAlertEmail(profile.id, profile.email, navigator.userAgent, credentials.name || "Someone")
       .catch((err) => console.error("Failed to send login alert email:", err));
   }, []);
 

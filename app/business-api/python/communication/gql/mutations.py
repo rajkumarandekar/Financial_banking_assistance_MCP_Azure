@@ -17,17 +17,20 @@ def _new_id() -> str:
 class Mutation:
     @strawberry.mutation
     async def send_login_alert_email(
-        self, info: Info, customer_id: str, recipient_email: str, device_info: str
+        self, info: Info, customer_id: str, recipient_email: str, device_info: str, visitor_name: str
     ) -> CommunicationType:
         """System-triggered login notification - sent directly, no AI/approval
         gate involved, since it's a security alert the user didn't ask for in
-        the moment, not a financial action needing confirmation."""
-        subject = "New sign-in to your SecureBank account"
+        the moment, not a financial action needing confirmation. visitor_name
+        is self-reported at the login form, not verified identity - this is a
+        demo with no real auth, so it's "who says they just signed in",
+        useful when more than one person might use the same login screen."""
+        subject = f"New sign-in to your SecureBank account by {visitor_name}"
         body = (
-            f"We noticed a new sign-in to your SecureBank account.\n\n"
+            f"{visitor_name} just signed in to your SecureBank account.\n\n"
             f"Device/browser: {device_info}\n\n"
-            f"If this was you, no action is needed. If you don't recognize this "
-            f"sign-in, please contact support immediately."
+            f"If this was you (or someone you expected), no action is needed. If you don't "
+            f"recognize this name or sign-in, please contact support immediately."
         )
         success = senders.send_email_stub(recipient_email, subject, body)
         repo = CommunicationRepository(info.context["db_session"])

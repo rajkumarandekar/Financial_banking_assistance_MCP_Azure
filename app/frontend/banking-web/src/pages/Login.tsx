@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 
 const Login = () => {
   const { login, isAuthenticated, loading } = useAuth();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("Rajkumar");
   const [password, setPassword] = useState("password");
   const [submitting, setSubmitting] = useState(false);
@@ -33,7 +34,7 @@ const Login = () => {
     setSubmitting(true);
 
     try {
-      await login({ email, password });
+      await login({ email, password, name });
       toast({
         title: "Sign in successful",
         description: "Welcome back to your enterprise dashboard.",
@@ -58,6 +59,20 @@ const Login = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="name" className="text-sm text-slate-300">
+              Your Name
+            </Label>
+            <Input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Who's signing in?"
+              required
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="email" className="text-sm text-slate-300">
               Username
